@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
@@ -12,6 +12,7 @@ export default defineConfig(() => {
       },
     },
     define: {
+      'import.meta.env.DEV': JSON.stringify(mode === 'development'),
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(
         process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || ''
       ),
