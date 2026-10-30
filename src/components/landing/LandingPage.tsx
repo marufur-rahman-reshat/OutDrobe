@@ -1,0 +1,294 @@
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
+import { HERO_WARDROBE_IMAGE, GARMENT_PRESET_ASSETS } from '../../data/garmentAssets';
+import { GarmentImage } from '../common/GarmentImage';
+
+interface LandingPageProps {
+  onOpenAuth: (mode: 'login' | 'register') => void;
+  onEnterDemo: () => void;
+  onOpenBlueprint: () => void;
+}
+
+export const LandingPage: React.FC<LandingPageProps> = ({
+  onOpenAuth,
+  onEnterDemo,
+  onOpenBlueprint,
+}) => {
+  const showcaseItems = [
+    {
+      key: 'sage_blazer',
+      name: 'Tailored Linen-Wool Blazer',
+      meta: 'Outerwear · Soft Sage · $25.45 / wear',
+    },
+    {
+      key: 'ivory_knit',
+      name: 'Fine-Gauge Merino Crewneck',
+      meta: 'Tops · Warm Ivory · $9.06 / wear',
+    },
+    {
+      key: 'charcoal_trousers',
+      name: 'Wide-Leg Pleated Wool Trousers',
+      meta: 'Bottoms · Deep Charcoal · $10.26 / wear',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1C1D1A] flex flex-col">
+      {/* Strict 3-Zone Top Bar Contract */}
+      <header className="sticky top-0 z-30 bg-[#FAF8F5]/95 backdrop-blur-xs border-b border-[#E5E0D8]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 px-6 py-4">
+          <a
+            href="#top"
+            className="font-editorial text-2xl font-semibold tracking-tight text-[#1C1D1A] whitespace-nowrap shrink-0"
+          >
+            OutDrobe
+          </a>
+
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#5C5E58]">
+            <a
+              href="#workflow"
+              className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            >
+              Workflow
+            </a>
+            <a
+              href="#capsule"
+              className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            >
+              Capsule View
+            </a>
+            <button
+              type="button"
+              onClick={onOpenBlueprint}
+              className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Architecture
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenAuth('login')}
+              className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Sign In
+            </button>
+          </nav>
+
+          <div className="flex items-center shrink-0">
+            <button
+              type="button"
+              onClick={onEnterDemo}
+              className="px-4 py-2 text-xs font-medium text-white bg-[#526B56] rounded-lg hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+            >
+              Open Wardrobe
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main id="top" className="flex-1">
+        {/* Section 1: Editorial Hero Split */}
+        <section className="max-w-7xl mx-auto px-6 pt-12 pb-16 lg:pt-16 lg:pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
+            <div className="lg:col-span-5 flex flex-col justify-center">
+              <p className="text-xs font-medium text-[#526B56] mb-3">
+                The Pocket Wardrobe · Personal Closet Studio
+              </p>
+              <h1
+                className="font-editorial font-medium text-[#1C1D1A] leading-[1.08] tracking-tight"
+                style={{ fontSize: 'clamp(2.5rem, 4.2vw, 3.85rem)', textWrap: 'balance' }}
+              >
+                Dress with quiet clarity every single morning.
+              </h1>
+              <p className="mt-5 text-base text-[#5C5E58] leading-relaxed max-w-xl">
+                Catalog the garments you already own, compose balanced multi-layer outfits, schedule
+                your week on a calm visual calendar, and understand true cost-per-wear.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onEnterDemo}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors whitespace-nowrap shrink-0"
+                >
+                  Explore Live Demo Closet
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenBlueprint}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors whitespace-nowrap shrink-0"
+                >
+                  Read 10-Part Architecture Spec
+                </button>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-[#E5E0D8] flex items-center gap-3 text-xs text-[#73766E]">
+                <span>12 Core Modules</span>
+                <span aria-hidden="true">·</span>
+                <span>Isolated User Data</span>
+                <span aria-hidden="true">·</span>
+                <span>Beginner-Friendly Full-Stack Blueprint</span>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 flex">
+              <div className="w-full rounded-2xl overflow-hidden border border-[#E5E0D8] bg-[#EFECE6]">
+                <img
+                  src={HERO_WARDROBE_IMAGE}
+                  alt="Minimalist oak garment rack with neutral linen shirts, soft sage wool coat, and charcoal tailored trousers in a sunlit room"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full min-h-[320px] lg:h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Full-width 4-column proof & workflow metric row */}
+          <div className="mt-12 pt-10 border-t border-[#E5E0D8] grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">Under 60s</p>
+              <p className="mt-1 text-sm text-[#5C5E58]">
+                Morning outfit selection when scheduled on your weekly lookbook calendar
+              </p>
+            </div>
+            <div>
+              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">100% Private</p>
+              <p className="mt-1 text-sm text-[#5C5E58]">
+                User-scoped data model isolating garments, photos, and wear logs by account UID
+              </p>
+            </div>
+            <div>
+              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">5 Layers</p>
+              <p className="mt-1 text-sm text-[#5C5E58]">
+                Visual Outfit Builder supporting Outerwear, Tops, Bottoms, Footwear, and Accessories
+              </p>
+            </div>
+            <div>
+              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">Real Cost / Wear</p>
+              <p className="mt-1 text-sm text-[#5C5E58]">
+                Automatic wear-counter updates reveal your highest-value wardrobe staples
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Mechanism-to-Outcome Workflow */}
+        <section id="workflow" className="bg-[#F2EFE9] border-y border-[#E5E0D8] py-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-2xl">
+              <p className="text-xs font-medium text-[#526B56] mb-2">How OutDrobe Works</p>
+              <h2
+                className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]"
+                style={{ textWrap: 'balance' }}
+              >
+                From scattered hangers to an intentional personal archive.
+              </h2>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
+                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">01. Digitize & Organize</p>
+                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
+                  Upload clothing with clean attributes
+                </h3>
+                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                  Photograph your pieces or test with studio presets. Filter effortlessly by
+                  category, season, fabric, and color harmony without digging through drawers.
+                </p>
+              </div>
+
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
+                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">02. Compose & Favorite</p>
+                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
+                  Build outfits side-by-side before dressing
+                </h3>
+                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                  Pair outerwear, tops, trousers, and shoes on an editorial canvas. Save favorite
+                  combinations for campus lectures, studio reviews, or weekend travel.
+                </p>
+              </div>
+
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
+                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">03. Plan & Track Rotation</p>
+                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
+                  Schedule your calendar & uncover sleepers
+                </h3>
+                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                  Assign outfits to upcoming dates, log daily wears in one click, and let smart
+                  suggestions revive unworn garments sitting at the back of your closet.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 3: Curated Capsule Preview */}
+        <section id="capsule" className="max-w-7xl mx-auto px-6 py-20">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <p className="text-xs font-medium text-[#526B56] mb-2">Inside the Wardrobe</p>
+              <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
+                Calm, editorial garment cards
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => onOpenAuth('register')}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#526B56] hover:text-[#354938] transition-colors whitespace-nowrap shrink-0"
+            >
+              Create your own closet
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {showcaseItems.map((item) => {
+              const asset = GARMENT_PRESET_ASSETS[item.key];
+              return (
+                <div
+                  key={item.key}
+                  className="bg-white border border-[#E5E0D8] rounded-xl overflow-hidden flex flex-col"
+                >
+                  <div className="aspect-[3/4] w-full">
+                    <GarmentImage
+                      imageKey={item.key}
+                      alt={item.name}
+                      colorHex={asset?.backdropHex}
+                      className="w-full h-full"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-sans text-base font-semibold text-[#1C1D1A]">{item.name}</h3>
+                    <p className="mt-1 text-xs text-[#73766E] font-mono-tabular">{item.meta}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-[#E5E0D8] bg-[#FAF8F5] py-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#73766E]">
+          <p>OutDrobe — The Pocket Wardrobe. Designed for intentional everyday dressing.</p>
+          <div className="flex items-center gap-6">
+            <button
+              type="button"
+              onClick={onOpenBlueprint}
+              className="hover:text-[#1C1D1A] transition-colors"
+            >
+              System Architecture Blueprint
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenAuth('login')}
+              className="hover:text-[#1C1D1A] transition-colors"
+            >
+              Account Sign In
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
