@@ -62,6 +62,7 @@ export default function App() {
 
   const [activeSection, setActiveSection] = useState<AppSection>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [editingOutfit, setEditingOutfit] = useState<Outfit | null>(null);
 
   const [wardrobe, setWardrobe] = useState<ClothingItem[]>([]);
   const [outfits, setOutfits] = useState<Outfit[]>([]);
@@ -154,6 +155,30 @@ export default function App() {
     setOutfits((prev) => [outfit, ...prev]);
   };
 
+  const handleStartEditOutfit = (outfit: Outfit) => {
+    setEditingOutfit(outfit);
+    setActiveSection('builder');
+  };
+
+  const handleUpdateOutfit = async (id: string, payload: Partial<Outfit>) => {
+    const { outfit: updated } = await outdrobeApi.updateOutfit(id, payload);
+    setOutfits((prev) => prev.map((o) => (o.id === id ? updated : o)));
+    setEditingOutfit(null);
+    setActiveSection('outfits');
+  };
+
+  const handleNavigate = (section: AppSection) => {
+    if (section === 'builder') {
+      setEditingOutfit(null);
+    }
+    setActiveSection(section);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingOutfit(null);
+    setActiveSection('outfits');
+  };
+
   const handleToggleOutfitFavorite = async (outfit: Outfit) => {
     const { outfit: updated } = await outdrobeApi.updateOutfit(outfit.id, {
       isFavorite: !outfit.isFavorite,
@@ -163,6 +188,9 @@ export default function App() {
 
   const handleDeleteOutfit = async (outfit: Outfit) => {
     await outdrobeApi.deleteOutfit(outfit.id);
+    if (editingOutfit?.id === outfit.id) {
+      setEditingOutfit(null);
+    }
     setOutfits((prev) => prev.filter((o) => o.id !== outfit.id));
     setCalendar((prev) => prev.filter((c) => c.outfitId !== outfit.id));
   };
@@ -315,7 +343,7 @@ export default function App() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setActiveSection(item.id)}
+                onClick={() => handleNavigate(item.id)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                   active
                     ? 'bg-white text-[#1C1D1A] border border-[#E5E0D8]'
@@ -373,7 +401,7 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => {
-                      setActiveSection(item.id);
+                      handleNavigate(item.id);
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium ${
@@ -428,7 +456,7 @@ export default function App() {
             {activeSection !== 'builder' && (
               <button
                 type="button"
-                onClick={() => setActiveSection('builder')}
+                onClick={() => handleNavigate('builder')}
                 className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
               >
                 Outfit Builder
@@ -445,7 +473,7 @@ export default function App() {
               outfits={outfits}
               calendar={calendar}
               wearLogs={wearLogs}
-              onNavigate={setActiveSection}
+              onNavigate={handleNavigate}
               onLogPlannedOutfit={handleLogPlannedOutfit}
             />
           )}
@@ -462,7 +490,10 @@ export default function App() {
           {activeSection === 'builder' && (
             <OutfitBuilderView
               wardrobe={wardrobe}
+              editingOutfit={editingOutfit}
               onSaveOutfit={handleCreateOutfit}
+              onUpdateOutfit={handleUpdateOutfit}
+              onCancelEdit={handleCancelEdit}
             />
           )}
 
@@ -471,8 +502,9 @@ export default function App() {
               outfits={outfits}
               wardrobe={wardrobe}
               favoritesOnly={false}
-              onNavigate={setActiveSection}
+              onNavigate={handleNavigate}
               onToggleFavorite={handleToggleOutfitFavorite}
+              onEditOutfit={handleStartEditOutfit}
               onDeleteOutfit={handleDeleteOutfit}
               onLogWearToday={handleLogOutfitToday}
               onScheduleOutfit={handleScheduleOutfit}
@@ -484,8 +516,9 @@ export default function App() {
               outfits={outfits}
               wardrobe={wardrobe}
               favoritesOnly
-              onNavigate={setActiveSection}
+              onNavigate={handleNavigate}
               onToggleFavorite={handleToggleOutfitFavorite}
+              onEditOutfit={handleStartEditOutfit}
               onDeleteOutfit={handleDeleteOutfit}
               onLogWearToday={handleLogOutfitToday}
               onScheduleOutfit={handleScheduleOutfit}

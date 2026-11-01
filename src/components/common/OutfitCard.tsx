@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarPlus, CheckCircle2, Heart, Trash2 } from 'lucide-react';
+import { CalendarPlus, CheckCircle2, Heart, Pencil, Trash2 } from 'lucide-react';
 import type { ClothingItem, Outfit } from '../../types/outdrobe';
 import { GarmentImage } from './GarmentImage';
 
@@ -9,6 +9,7 @@ interface OutfitCardProps {
   onToggleFavorite: (outfit: Outfit) => void;
   onSchedule: (outfit: Outfit) => void;
   onLogWearToday: (outfit: Outfit) => void;
+  onEdit?: (outfit: Outfit) => void;
   onDelete: (outfit: Outfit) => void;
 }
 
@@ -18,6 +19,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
   onToggleFavorite,
   onSchedule,
   onLogWearToday,
+  onEdit,
   onDelete,
 }) => {
   const pieces = outfit.itemIds
@@ -115,14 +117,26 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onDelete(outfit)}
-            aria-label={`Delete outfit ${outfit.name}`}
-            className="p-2 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0] transition-colors shrink-0"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            {onEdit && (
+              <button
+                type="button"
+                onClick={() => onEdit(outfit)}
+                aria-label={`Edit outfit ${outfit.name}`}
+                className="p-2 rounded-lg text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors shrink-0"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => onDelete(outfit)}
+              aria-label={`Delete outfit ${outfit.name}`}
+              className="p-2 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0] transition-colors shrink-0"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </article>

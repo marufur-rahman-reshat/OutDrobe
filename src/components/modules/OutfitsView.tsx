@@ -14,6 +14,7 @@ interface OutfitsViewProps {
   favoritesOnly?: boolean;
   onNavigate: (section: AppSection) => void;
   onToggleFavorite: (outfit: Outfit) => Promise<void>;
+  onEditOutfit?: (outfit: Outfit) => void;
   onDeleteOutfit: (outfit: Outfit) => Promise<void>;
   onLogWearToday: (outfit: Outfit) => Promise<void>;
   onScheduleOutfit: (date: string, outfitId: string, occasionNote: string) => Promise<void>;
@@ -35,6 +36,7 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
   favoritesOnly = false,
   onNavigate,
   onToggleFavorite,
+  onEditOutfit,
   onDeleteOutfit,
   onLogWearToday,
   onScheduleOutfit,
@@ -153,6 +155,7 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
               onToggleFavorite={onToggleFavorite}
               onSchedule={(o) => setSchedulingOutfit(o)}
               onLogWearToday={handleWearClick}
+              onEdit={onEditOutfit}
               onDelete={onDeleteOutfit}
             />
           ))}

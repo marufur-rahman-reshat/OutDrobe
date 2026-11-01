@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, Layers, RotateCcw, Shuffle } from 'lucide-react';
 import type {
   ClothingCategory,
@@ -11,7 +11,10 @@ import { GarmentImage } from '../common/GarmentImage';
 
 interface OutfitBuilderViewProps {
   wardrobe: ClothingItem[];
+  editingOutfit?: Outfit | null;
   onSaveOutfit: (payload: Partial<Outfit>) => Promise<void>;
+  onUpdateOutfit?: (id: string, payload: Partial<Outfit>) => Promise<void>;
+  onCancelEdit?: () => void;
 }
 
 const LAYER_ORDER: ClothingCategory[] = [
@@ -35,7 +38,10 @@ const SEASONS: SeasonTag[] = ['All Seasons', 'Spring', 'Summer', 'Autumn', 'Wint
 
 export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
   wardrobe,
+  editingOutfit,
   onSaveOutfit,
+  onUpdateOutfit,
+  onCancelEdit,
 }) => {
   const safeWardrobe = Array.isArray(wardrobe) ? wardrobe : [];
 
@@ -43,6 +49,16 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
   const [selectedByCategory, setSelectedByCategory] = useState<
     Partial<Record<ClothingCategory, string>>
   >(() => {
+    if (editingOutfit && Array.isArray(editingOutfit.itemIds)) {
+      const mapped: Partial<Record<ClothingCategory, string>> = {};
+      editingOutfit.itemIds.forEach((itemId) => {
+        const item = safeWardrobe.find((g) => g.id === itemId);
+        if (item) {
+          mapped[item.category] = item.id;
+        }
+      });
+      return mapped;
+    }
     const initial: Partial<Record<ClothingCategory, string>> = {};
     const top = safeWardrobe.find((g) => g.category === 'Tops');
     const bottom = safeWardrobe.find((g) => g.category === 'Bottoms');
@@ -53,13 +69,57 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
     return initial;
   });
 
-  const [outfitName, setOutfitName] = useState('');
-  const [occasion, setOccasion] = useState<OccasionTag>('Daily Studio');
-  const [season, setSeason] = useState<SeasonTag>('All Seasons');
-  const [notes, setNotes] = useState('');
-  const [isFavorite, setIsFavorite] = useState(true);
+  const [outfitName, setOutfitName] = useState(() => editingOutfit?.name || '');
+  const [occasion, setOccasion] = useState<OccasionTag>(
+    () => editingOutfit?.occasion || 'Daily Studio'
+  );
+  const [season, setSeason] = useState<SeasonTag>(
+    () => editingOutfit?.season || 'All Seasons'
+  );
+  const [notes, setNotes] = useState(() => editingOutfit?.notes || '');
+  const [isFavorite, setIsFavorite] = useState(() =>
+    editingOutfit ? Boolean(editingOutfit.isFavorite) : true
+  );
   const [saving, setSaving] = useState(false);
   const [savedBanner, setSavedBanner] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (editingOutfit) {
+      setOutfitName(editingOutfit.name || '');
+      setOccasion(editingOutfit.occasion || 'Daily Studio');
+      setSeason(editingOutfit.season || 'All Seasons');
+      setNotes(editingOutfit.notes || '');
+      setIsFavorite(Boolean(editingOutfit.isFavorite));
+      setSavedBanner(null);
+
+      const mapped: Partial<Record<ClothingCategory, string>> = {};
+      if (Array.isArray(editingOutfit.itemIds)) {
+        editingOutfit.itemIds.forEach((itemId) => {
+          const item = safeWardrobe.find((g) => g.id === itemId);
+          if (item) {
+            mapped[item.category] = item.id;
+          }
+        });
+      }
+      setSelectedByCategory(mapped);
+    } else {
+      setOutfitName('');
+      setOccasion('Daily Studio');
+      setSeason('All Seasons');
+      setNotes('');
+      setIsFavorite(true);
+      setSavedBanner(null);
+
+      const initial: Partial<Record<ClothingCategory, string>> = {};
+      const top = safeWardrobe.find((g) => g.category === 'Tops');
+      const bottom = safeWardrobe.find((g) => g.category === 'Bottoms');
+      const shoe = safeWardrobe.find((g) => g.category === 'Footwear');
+      if (top) initial.Tops = top.id;
+      if (bottom) initial.Bottoms = bottom.id;
+      if (shoe) initial.Footwear = shoe.id;
+      setSelectedByCategory(initial);
+    }
+  }, [editingOutfit, wardrobe]);
 
   const wardrobeMap = new Map<string, ClothingItem>(safeWardrobe.map((g) => [g.id, g]));
 
@@ -108,17 +168,24 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
     try {
       const resolvedName =
         outfitName.trim() || `${occasion} ${selectedItems[0].color} Look`;
-      await onSaveOutfit({
+      const payload: Partial<Outfit> = {
         name: resolvedName,
         occasion,
         season,
         itemIds: selectedItems.map((i) => i.id),
         isFavorite,
         notes: notes.trim(),
-      });
-      setOutfitName('');
-      setNotes('');
-      setSavedBanner(`Saved "${resolvedName}" to your Outfits collection.`);
+      };
+
+      if (editingOutfit && onUpdateOutfit) {
+        await onUpdateOutfit(editingOutfit.id, payload);
+        setSavedBanner(`Updated "${resolvedName}" successfully.`);
+      } else {
+        await onSaveOutfit(payload);
+        setOutfitName('');
+        setNotes('');
+        setSavedBanner(`Saved "${resolvedName}" to your Outfits collection.`);
+      }
     } finally {
       setSaving(false);
     }
@@ -130,12 +197,16 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
-          <p className="text-xs font-medium text-[#526B56] mb-1">Visual Lookbook Studio</p>
+          <p className="text-xs font-medium text-[#526B56] mb-1">
+            {editingOutfit ? 'Edit Lookbook Ensemble' : 'Visual Lookbook Studio'}
+          </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            Outfit Builder
+            {editingOutfit ? `Edit "${editingOutfit.name}"` : 'Outfit Builder'}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
-            Select one piece per layer to compose balanced silhouettes and test color harmony.
+            {editingOutfit
+              ? 'Update pieces, occasion, season, or styling notes for this saved ensemble.'
+              : 'Select one piece per layer to compose balanced silhouettes and test color harmony.'}
           </p>
         </div>
 
@@ -396,13 +467,32 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
               <span>Add immediately to Favorite Outfits</span>
             </label>
 
-            <button
-              type="submit"
-              disabled={selectedItems.length === 0 || saving}
-              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-45 transition-colors"
-            >
-              {saving ? 'Saving Outfit...' : 'Save Outfit to Lookbook'}
-            </button>
+            <div className="flex items-center gap-2">
+              {editingOutfit && onCancelEdit && (
+                <button
+                  type="button"
+                  onClick={onCancelEdit}
+                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors text-center"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={selectedItems.length === 0 || saving}
+                className={`${
+                  editingOutfit ? 'flex-2' : 'w-full'
+                } py-2.5 px-4 rounded-lg text-sm font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-45 transition-colors`}
+              >
+                {saving
+                  ? editingOutfit
+                    ? 'Updating Look...'
+                    : 'Saving Outfit...'
+                  : editingOutfit
+                  ? 'Update Look'
+                  : 'Save Outfit to Lookbook'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
