@@ -25,7 +25,11 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
 
   return (
     <article className="group bg-white border border-[#E5E0D8] rounded-xl overflow-hidden transition-transform duration-150 ease-out hover:-translate-y-0.5 flex flex-col">
-      <div className="relative aspect-[3/4] w-full">
+      <div
+        className="relative aspect-[3/4] w-full cursor-pointer"
+        onClick={() => onEdit(item)}
+        title={`View details for ${item.name}`}
+      >
         <GarmentImage
           imageKey={item.imageKey}
           customImageUrl={item.customImageUrl}
@@ -36,7 +40,10 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
 
         <button
           type="button"
-          onClick={() => onToggleFavorite(item)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite(item);
+          }}
           aria-label={item.isFavorite ? `Remove ${item.name} from favorites` : `Save ${item.name} to favorites`}
           className="absolute top-3 right-3 w-10 h-10 rounded-full bg-[#FAF8F5]/90 backdrop-blur-xs border border-[#E5E0D8] flex items-center justify-center text-[#1C1D1A] hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-[#526B56]"
         >
@@ -48,7 +55,10 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
         </button>
       </div>
 
-      <div className="p-4 flex-1 flex flex-col justify-between gap-3">
+      <div
+        className="p-4 flex-1 flex flex-col justify-between gap-3 cursor-pointer"
+        onClick={() => onEdit(item)}
+      >
         <div>
           <div className="flex items-center gap-1.5 text-xs text-[#73766E] mb-1">
             <span>{item.category}</span>
@@ -56,7 +66,7 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
             <span>{item.brand}</span>
           </div>
 
-          <h3 className="font-sans text-base font-semibold text-[#1C1D1A] leading-snug line-clamp-1">
+          <h3 className="font-sans text-base font-semibold text-[#1C1D1A] leading-snug line-clamp-1 group-hover:text-[#526B56] transition-colors">
             {item.name}
           </h3>
 
@@ -82,7 +92,10 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
           <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
-              onClick={() => onEdit(item)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
               aria-label={`Edit ${item.name}`}
               className="p-2 rounded-lg text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors focus-visible:outline-2 focus-visible:outline-[#526B56]"
             >
@@ -90,7 +103,10 @@ export const ClothingCard: React.FC<ClothingCardProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => onDelete(item)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
               aria-label={`Delete ${item.name}`}
               className="p-2 rounded-lg text-[#5C5E58] hover:text-[#B93829] hover:bg-[#FDF2F0] transition-colors focus-visible:outline-2 focus-visible:outline-[#526B56]"
             >

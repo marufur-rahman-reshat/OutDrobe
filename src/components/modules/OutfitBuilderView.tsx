@@ -8,6 +8,7 @@ import type {
   SeasonTag,
 } from '../../types/outdrobe';
 import { GarmentImage } from '../common/GarmentImage';
+import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
 
 interface OutfitBuilderViewProps {
   wardrobe: ClothingItem[];
@@ -15,6 +16,8 @@ interface OutfitBuilderViewProps {
   onSaveOutfit: (payload: Partial<Outfit>) => Promise<void>;
   onUpdateOutfit?: (id: string, payload: Partial<Outfit>) => Promise<void>;
   onCancelEdit?: () => void;
+  isTourActive?: boolean;
+  onNextTourStep?: () => void;
 }
 
 const LAYER_ORDER: ClothingCategory[] = [
@@ -42,6 +45,8 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
   onSaveOutfit,
   onUpdateOutfit,
   onCancelEdit,
+  isTourActive = false,
+  onNextTourStep,
 }) => {
   const safeWardrobe = Array.isArray(wardrobe) ? wardrobe : [];
 
@@ -195,6 +200,34 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* Contextual Spotlight Callout: Phase 3 Outfit Builder */}
+      {isTourActive && (
+        <TourSpotlightCallout
+          stepNumber={3}
+          stepBadge="Layering Studio"
+          stepTitle="Outfit Builder Canvas"
+          headline="Compose Multi-Piece Ensembles in Real Time"
+          description="Assemble complete looks before getting dressed. Choose one piece per layer from your capsule, observe proportional balance on the live canvas, and tag occasion context—all simulated in local memory."
+          guidancePoints={[
+            {
+              label: '1. Layer Selection Rack',
+              text: 'Switch between Outerwear, Tops, Bottoms, Footwear, and Accessories to pick one garment per slot.',
+            },
+            {
+              label: '2. Live Lookbook Canvas',
+              text: 'Observe color harmony swatches, combined outfit value, and multi-layer composition updating instantly.',
+            },
+            {
+              label: '3. Ensemble Metadata',
+              text: 'Assign occasion tags (Studio, Campus, Evening) and seasons to organize your saved looks for scheduling.',
+            },
+          ]}
+          interactiveTip="Select any garment from the rack or click 'Shuffle Capsule' above to watch the lookbook canvas combine pieces dynamically in local memory."
+          onNext={onNextTourStep}
+          nextLabel="Next: Outfit Calendar →"
+        />
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
           <p className="text-xs font-medium text-[#526B56] mb-1">
@@ -244,8 +277,22 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left 7 Columns: Garment Layer Picker */}
-        <div className="lg:col-span-7 space-y-5">
+        {/* Left 7 Columns: Garment Layer Picker with Tour Spotlight */}
+        <div
+          className={`lg:col-span-7 space-y-5 p-2 rounded-2xl transition-all duration-300 ${
+            isTourActive ? 'ring-2 ring-[#526B56]/50 bg-[#F2EFE9]/40' : ''
+          }`}
+        >
+          {isTourActive && (
+            <div className="flex items-center justify-between text-xs text-[#73766E] px-1 -mb-2">
+              <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
+                Layer Selection Rack · Pick 1 Piece per Layer
+              </span>
+              <span className="hidden sm:inline">Outerwear · Tops · Bottoms · Shoes</span>
+            </div>
+          )}
+
           <div className="flex items-center gap-1 p-1 bg-[#EFECE6] rounded-lg overflow-x-auto">
             {LAYER_ORDER.map((cat) => {
               const hasSelection = Boolean(selectedByCategory[cat]);
@@ -318,11 +365,24 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
           )}
         </div>
 
-        {/* Right 5 Columns: Live Outfit Composition Canvas & Save Form */}
+        {/* Right 5 Columns: Live Outfit Composition Canvas & Save Form with Tour Spotlight */}
         <form
           onSubmit={handleSave}
-          className="lg:col-span-5 bg-white border border-[#E5E0D8] rounded-xl p-6 space-y-6"
+          className={`lg:col-span-5 bg-white border border-[#E5E0D8] rounded-xl p-6 space-y-6 transition-all duration-300 ${
+            isTourActive ? 'ring-2 ring-[#526B56]/50 shadow-md' : ''
+          }`}
         >
+          {isTourActive && (
+            <div className="p-2.5 rounded-lg bg-[#EBF0EC] border border-[#CBD8CD] text-xs text-[#2D4030] flex items-center gap-2">
+              <span className="font-mono text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-white text-[#354938] border border-[#CBD8CD] shrink-0">
+                Live Studio
+              </span>
+              <span>
+                Testing layer combinations live in local memory. Zero changes are written to the database.
+              </span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#526B56]" />

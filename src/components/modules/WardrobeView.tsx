@@ -4,12 +4,15 @@ import type { ClothingCategory, ClothingItem, SeasonTag } from '../../types/outd
 import { COLOR_SWATCH_OPTIONS, GARMENT_PRESET_ASSETS } from '../../data/garmentAssets';
 import { ClothingCard } from '../common/ClothingCard';
 import { GarmentImage } from '../common/GarmentImage';
+import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
 
 interface WardrobeViewProps {
   wardrobe: ClothingItem[];
   onCreateGarment: (payload: Partial<ClothingItem>) => Promise<void>;
   onUpdateGarment: (id: string, payload: Partial<ClothingItem>) => Promise<void>;
   onDeleteGarment: (item: ClothingItem) => Promise<void>;
+  isTourActive?: boolean;
+  onNextTourStep?: () => void;
 }
 
 const CATEGORIES: ('All' | ClothingCategory)[] = [
@@ -73,6 +76,8 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
   onCreateGarment,
   onUpdateGarment,
   onDeleteGarment,
+  isTourActive = false,
+  onNextTourStep,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<'All' | ClothingCategory>('All');
   const [selectedSeason, setSelectedSeason] = useState<'All' | SeasonTag>('All');
@@ -210,6 +215,34 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* Contextual Spotlight Callout: Phase 2 Digital Wardrobe */}
+      {isTourActive && (
+        <TourSpotlightCallout
+          stepNumber={2}
+          stepBadge="Garment Archive"
+          stepTitle="Curated Digital Wardrobe"
+          headline="Catalog, Filter, and Inspect Your Clothes"
+          description="OutDrobe replaces cluttered drawers with a clear visual archive. Explore Claire Vance’s 9-piece capsule, filter by category or season, and inspect individual garment fabrics and wear metrics."
+          guidancePoints={[
+            {
+              label: 'Category & Season Filters',
+              text: 'Use the category pills below to isolate Outerwear, Tops, Bottoms, Footwear, or Accessories.',
+            },
+            {
+              label: 'Garment Cards & Metrics',
+              text: 'Each piece calculates real cost-per-wear by dividing purchase price by wear count.',
+            },
+            {
+              label: 'Click Any Card to Inspect',
+              text: 'Click any garment card (or its pencil icon) to view tailored fabrics, natural fibers, color swatch, and care notes.',
+            },
+          ]}
+          interactiveTip="Try switching between 'Outerwear' and 'Tops' below, or click any garment card to inspect its tailoring details."
+          onNext={onNextTourStep}
+          nextLabel="Next: Outfit Builder →"
+        />
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
@@ -233,8 +266,12 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         </button>
       </div>
 
-      {/* Interactive Filter Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Interactive Filter Toolbar with Tour Spotlight */}
+      <div
+        className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-2 rounded-xl transition-all duration-300 ${
+          isTourActive ? 'ring-2 ring-[#526B56]/50 bg-[#F2EFE9]/80' : ''
+        }`}
+      >
         <div className="flex items-center gap-1 p-1 bg-[#EFECE6] rounded-lg overflow-x-auto">
           {CATEGORIES.map((cat) => (
             <button
@@ -279,9 +316,24 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         </div>
       </div>
 
+      {/* Tour Grid Header if active */}
+      {isTourActive && (
+        <div className="flex items-center justify-between text-xs text-[#73766E] px-1 -mb-3">
+          <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
+            Highlighted Garment Grid · {filteredItems.length} Pieces Shown
+          </span>
+          <span className="hidden sm:inline">Click any garment card to inspect details</span>
+        </div>
+      )}
+
       {/* Garment Grid or Empty State */}
       {filteredItems.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-2 rounded-2xl transition-all duration-300 ${
+            isTourActive ? 'ring-2 ring-[#526B56]/30 bg-[#FAF8F5]' : ''
+          }`}
+        >
           {filteredItems.map((item) => (
             <ClothingCard
               key={item.id}
@@ -347,6 +399,17 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             <h2 id="garment-modal-title" className="font-editorial text-3xl font-medium text-[#1C1D1A]">
               {editingItem ? editingItem.name : 'Catalog a Garment'}
             </h2>
+
+            {isTourActive && editingItem && (
+              <div className="mt-3 p-3 rounded-xl bg-[#EBF0EC] border border-[#CBD8CD] text-xs text-[#2D4030] flex items-center gap-2.5">
+                <span className="font-semibold font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-white text-[#354938] border border-[#CBD8CD] shrink-0">
+                  Demo Detail View
+                </span>
+                <span className="leading-relaxed">
+                  Inspecting {editingItem.brand} · {editingItem.category} in {editingItem.color}. Form fields show fabric, season, and cost-per-wear breakdown.
+                </span>
+              </div>
+            )}
 
             <form onSubmit={handleSave} className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
               {/* Left Column: Image Upload & Preview */}

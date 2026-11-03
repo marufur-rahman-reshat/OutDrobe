@@ -5,13 +5,15 @@ import { GarmentImage } from '../common/GarmentImage';
 
 interface LandingPageProps {
   onOpenAuth: (mode: 'login' | 'register') => void;
-  onEnterDemo: () => void;
+  onOpenWardrobe: () => void;
+  onExploreDemoCloset: () => void;
   onOpenBlueprint: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenAuth,
-  onEnterDemo,
+  onOpenWardrobe,
+  onExploreDemoCloset,
   onOpenBlueprint,
 }) => {
   const showcaseItems = [
@@ -76,7 +78,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="flex items-center shrink-0">
             <button
               type="button"
-              onClick={onEnterDemo}
+              onClick={onOpenWardrobe}
               className="px-4 py-2 text-xs font-medium text-white bg-[#526B56] rounded-lg hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
             >
               Open Wardrobe
@@ -91,7 +93,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
             <div className="lg:col-span-5 flex flex-col justify-center">
               <p className="text-xs font-medium text-[#526B56] mb-3">
-                The Pocket Wardrobe · Personal Closet Studio
+                 The Pocket Wardrobe · Personal Closet Studio
               </p>
               <h1
                 className="font-editorial font-medium text-[#1C1D1A] leading-[1.08] tracking-tight"
@@ -107,7 +109,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={onEnterDemo}
+                  onClick={onExploreDemoCloset}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors whitespace-nowrap shrink-0"
                 >
                   Explore Live Demo Closet

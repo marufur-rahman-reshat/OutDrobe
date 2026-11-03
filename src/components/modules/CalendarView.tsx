@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { CheckCircle2, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import type { CalendarPlan, ClothingItem, Outfit } from '../../types/outdrobe';
 import { GarmentImage } from '../common/GarmentImage';
+import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
 
 interface CalendarViewProps {
   calendar: CalendarPlan[];
@@ -10,6 +11,8 @@ interface CalendarViewProps {
   onScheduleOutfit: (date: string, outfitId: string, occasionNote: string) => Promise<void>;
   onRemovePlan: (id: string) => Promise<void>;
   onLogPlannedOutfit: (plan: CalendarPlan, outfit: Outfit) => Promise<void>;
+  isTourActive?: boolean;
+  onNextTourStep?: () => void;
 }
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -21,6 +24,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   onScheduleOutfit,
   onRemovePlan,
   onLogPlannedOutfit,
+  isTourActive = false,
+  onNextTourStep,
 }) => {
   const today = new Date();
   const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
@@ -101,6 +106,34 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   return (
     <div className="space-y-8">
+      {/* Contextual Spotlight Callout: Phase 4 Calendar Tour */}
+      {isTourActive && (
+        <TourSpotlightCallout
+          stepNumber={4}
+          stepBadge="Calendar Planning"
+          stepTitle="Weekly Lookbook Schedule"
+          headline="Eliminate Morning Rush by Scheduling Ahead"
+          description="Plan what you wear across the week or month. Assigned looks appear with visual thumbnails, occasion notes, and weather tags—ensuring balanced capsule rotation."
+          guidancePoints={[
+            {
+              label: '1. Monthly Lookbook Grid',
+              text: 'Days with planned looks show titles and green checkmarks for completed wear records.',
+            },
+            {
+              label: '2. Day Plan Inspector',
+              text: 'Selecting any date reveals the scheduled ensemble, garment piece thumbnails, and event context.',
+            },
+            {
+              label: '3. Stress-Free Mornings',
+              text: 'Assign outfits ahead of presentations, campus seminars, or weekend walks to remove decision fatigue.',
+            },
+          ]}
+          interactiveTip="Click on today’s date (highlighted in bold) or upcoming days to preview Claire Vance’s scheduled studio ensembles."
+          onNext={onNextTourStep}
+          nextLabel="Next: Smart Suggestions →"
+        />
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
           <p className="text-xs font-medium text-[#526B56] mb-1">Weekly & Monthly Lookbook Planner</p>
@@ -136,8 +169,22 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Monthly Calendar Grid */}
-        <div className="lg:col-span-8 bg-white border border-[#E5E0D8] rounded-xl p-5">
+        {/* Monthly Calendar Grid with Tour Spotlight */}
+        <div
+          className={`lg:col-span-8 bg-white border border-[#E5E0D8] rounded-xl p-5 transition-all duration-300 ${
+            isTourActive ? 'ring-2 ring-[#526B56]/50 shadow-md' : ''
+          }`}
+        >
+          {isTourActive && (
+            <div className="flex items-center justify-between text-xs text-[#73766E] pb-3 mb-3 border-b border-[#E5E0D8]">
+              <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
+                Interactive Lookbook Calendar · Click Any Date
+              </span>
+              <span className="hidden sm:inline">Shows planned looks & wear status</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-7 gap-2 mb-3">
             {WEEKDAYS.map((day) => (
               <div key={day} className="text-center text-xs font-medium text-[#73766E] py-1">
@@ -196,8 +243,23 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
         </div>
 
-        {/* Selected Day Inspector */}
-        <div className="lg:col-span-4 bg-white border border-[#E5E0D8] rounded-xl p-6 space-y-6">
+        {/* Selected Day Inspector with Tour Spotlight */}
+        <div
+          className={`lg:col-span-4 bg-white border border-[#E5E0D8] rounded-xl p-6 space-y-6 transition-all duration-300 ${
+            isTourActive ? 'ring-2 ring-[#526B56]/50 shadow-md' : ''
+          }`}
+        >
+          {isTourActive && (
+            <div className="p-2.5 rounded-lg bg-[#EBF0EC] border border-[#CBD8CD] text-xs text-[#2D4030] flex items-center gap-2">
+              <span className="font-mono text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-white text-[#354938] border border-[#CBD8CD] shrink-0">
+                Day Inspector
+              </span>
+              <span>
+                Displays the pieces and styling notes for the selected date.
+              </span>
+            </div>
+          )}
+
           <div>
             <p className="font-mono-tabular text-xs font-medium text-[#526B56]">{selectedDate}</p>
             <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A] mt-0.5">

@@ -41,19 +41,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleInstantDemo = async () => {
-    setError(null);
-    setSubmitting(true);
-    try {
-      const res = await outdrobeApi.loginDemo();
-      onAuthenticated(res.user);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Demo login unavailable.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
     <div
       className="fixed inset-0 z-50 bg-[#1C1D1A]/45 backdrop-blur-xs flex items-center justify-center p-4"
@@ -178,21 +165,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               : 'Create Account'}
           </button>
         </form>
-
-        <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-[#E5E0D8]" />
-          <span className="text-xs text-[#8A8D84]">or explore immediately</span>
-          <div className="h-px flex-1 bg-[#E5E0D8]" />
-        </div>
-
-        <button
-          type="button"
-          onClick={handleInstantDemo}
-          disabled={submitting}
-          className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD] hover:bg-[#DFE8E1] transition-colors"
-        >
-          Enter Demo Closet (Claire Vance)
-        </button>
       </div>
     </div>
   );

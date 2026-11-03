@@ -43,7 +43,7 @@ export const SuggestionsView: React.FC<SuggestionsViewProps> = ({
   const loadSuggestions = async () => {
     setLoading(true);
     try {
-      const res = await outdrobeApi.getSuggestions(occasion, climate);
+      const res = await outdrobeApi.getSuggestions(occasion, climate, safeWardrobe);
       setSuggestions(res.suggestions);
     } finally {
       setLoading(false);

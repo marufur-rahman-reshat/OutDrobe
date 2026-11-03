@@ -1177,10 +1177,16 @@ export const outdrobeApi = {
     };
   },
 
-  async getSuggestions(occasion: string, climate: string): Promise<{ suggestions: OutfitSuggestion[] }> {
+  async getSuggestions(
+    occasion: string,
+    climate: string,
+    customWardrobe?: ClothingItem[]
+  ): Promise<{ suggestions: OutfitSuggestion[] }> {
     try {
-      const snap = await outdrobeApi.getWorkspace();
-      const wardrobe = snap.wardrobe;
+      const wardrobe =
+        Array.isArray(customWardrobe) && customWardrobe.length > 0
+          ? customWardrobe
+          : (await outdrobeApi.getWorkspace()).wardrobe;
 
       const tops = wardrobe.filter((g) => g.category === 'Tops');
       const bottoms = wardrobe.filter((g) => g.category === 'Bottoms');
