@@ -74,37 +74,37 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
     <aside
       role="region"
       aria-label="Guided Product Tour Navigation"
-      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-2xl px-2 animate-in fade-in slide-in-from-bottom-4 duration-200"
+      className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-[500px] max-w-[500px] animate-in fade-in slide-in-from-bottom-3 duration-200"
     >
-      <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-2xl shadow-xl p-4 sm:p-5 text-[#1C1D1A]">
-        {/* Top Header: Badge, Step Counter, Progress Bar & Skip */}
-        <div className="flex items-center justify-between gap-3 mb-2.5 pb-2.5 border-b border-[#E5E0D8]">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD]">
+      <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-2xl shadow-xl p-3.5 sm:p-4 text-[#1C1D1A]">
+        {/* Top Header: Badge, Step Counter, Restart & Skip */}
+        <div className="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-[#E5E0D8]/80">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD] shrink-0">
               <Sparkles className="w-2.5 h-2.5 text-[#526B56]" />
-              {currentStep.badge}
+              <span className="truncate max-w-[120px]">{currentStep.badge}</span>
             </span>
-            <span className="font-mono text-xs text-[#73766E]">
+            <span className="font-mono text-[11px] text-[#73766E] whitespace-nowrap">
               Step <span className="font-semibold text-[#1C1D1A]">{stepNumber}</span> of {totalSteps}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {onRestart && (
               <button
                 type="button"
                 onClick={onRestart}
-                className="p-1 rounded text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer text-xs"
+                className="p-1 rounded text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
                 title="Restart Tour from Step 1"
                 aria-label="Restart Tour from Step 1"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3 h-3" />
               </button>
             )}
             <button
               type="button"
               onClick={onSkip}
-              className="text-xs font-medium text-[#73766E] hover:text-[#1C1D1A] px-2 py-0.5 rounded hover:bg-[#F2EFE9] transition-colors cursor-pointer"
+              className="text-[11px] font-medium text-[#73766E] hover:text-[#1C1D1A] px-1.5 py-0.5 rounded hover:bg-[#F2EFE9] transition-colors cursor-pointer whitespace-nowrap"
               aria-label="Skip guided product tour"
             >
               Skip Tour
@@ -113,7 +113,7 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
         </div>
 
         {/* Step Progress Line / Indicator */}
-        <div className="w-full bg-[#E5E0D8] h-1 rounded-full overflow-hidden mb-3">
+        <div className="w-full bg-[#E5E0D8] h-[2.5px] rounded-full overflow-hidden mb-2.5">
           <div
             className="bg-[#526B56] h-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -125,33 +125,33 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
           />
         </div>
 
-        {/* Step Content Preview */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-1">
-          <div className="min-w-0 pr-2">
-            <h3 className="font-editorial text-lg sm:text-xl font-medium tracking-tight text-[#1C1D1A] leading-snug">
+        {/* Step Content Preview & Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 py-0.5">
+          <div className="min-w-0 flex-1 pr-1">
+            <h3 className="font-editorial text-base sm:text-[17px] font-semibold tracking-tight text-[#1C1D1A] leading-tight truncate">
               {currentStep.title}
             </h3>
-            <p className="text-xs text-[#5C5E58] mt-0.5 line-clamp-2">
+            <p className="text-[11px] text-[#5C5E58] mt-0.5 line-clamp-2 leading-relaxed">
               {currentStep.description}
             </p>
           </div>
 
           {/* Action Navigation Buttons */}
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
             {/* Previous Button */}
             <button
               type="button"
               onClick={onPrev}
               disabled={isFirstStep}
-              className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
                 isFirstStep
                   ? 'bg-transparent text-[#A3A69D] cursor-not-allowed border border-transparent'
                   : 'bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9]'
               }`}
               aria-label="Previous tour step"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Previous</span>
+              <ChevronLeft className="w-3 h-3" />
+              <span>Prev</span>
             </button>
 
             {/* Next or Finish Button */}
@@ -159,21 +159,21 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
               <button
                 type="button"
                 onClick={onFinish}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs whitespace-nowrap"
                 aria-label="Finish guided tour"
               >
-                <Check className="w-3.5 h-3.5" />
-                <span>Finish Tour</span>
+                <Check className="w-3 h-3" />
+                <span>Finish</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={onNext}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs whitespace-nowrap"
                 aria-label="Next tour step"
               >
                 <span>Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -181,18 +181,18 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
 
         {/* Step dots navigation for direct access */}
         {onGoToStep && (
-          <div className="flex items-center justify-center gap-1.5 pt-2.5 mt-2 border-t border-[#E5E0D8]/60">
+          <div className="flex items-center justify-center gap-1.5 pt-1.5 mt-1.5 border-t border-[#E5E0D8]/60">
             {Array.from({ length: totalSteps }).map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => onGoToStep(idx)}
-                className={`h-1.5 rounded-full transition-all duration-200 cursor-pointer ${
+                className={`h-1 rounded-full transition-all duration-200 cursor-pointer ${
                   idx === currentStepIndex
-                    ? 'w-6 bg-[#526B56]'
+                    ? 'w-4 bg-[#526B56]'
                     : idx < currentStepIndex
-                    ? 'w-2 bg-[#7A8F7C]'
-                    : 'w-2 bg-[#E5E0D8] hover:bg-[#C2BEB5]'
+                    ? 'w-1.5 bg-[#7A8F7C]'
+                    : 'w-1.5 bg-[#E5E0D8] hover:bg-[#C2BEB5]'
                 }`}
                 aria-label={`Jump to step ${idx + 1}`}
                 aria-current={idx === currentStepIndex ? 'step' : undefined}

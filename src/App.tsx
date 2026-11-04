@@ -44,6 +44,7 @@ import {
   getDemoWearLogs,
 } from './data/demoWardrobeData';
 import { useDemoTour } from './hooks/useDemoTour';
+import { DEMO_TOUR_STEPS } from './types/tour';
 import { DemoWelcomeModal } from './components/demo/DemoWelcomeModal';
 import { DemoTourControls } from './components/demo/DemoTourControls';
 
@@ -69,7 +70,6 @@ const PRIMARY_NAV: NavItemConfig[] = [
 export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [bootstrapping, setBootstrapping] = useState(true);
-  const [publicBlueprintOpen, setPublicBlueprintOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register' | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [demoNotice, setDemoNotice] = useState<string | null>(null);
@@ -179,7 +179,6 @@ export default function App() {
     setIsDemoMode(false);
     tour.resetTour();
     setAuthModalMode(null);
-    setPublicBlueprintOpen(false);
     await hydrateWorkspace();
   };
 
@@ -301,6 +300,12 @@ export default function App() {
       setEditingOutfit(null);
     }
     setActiveSection(section);
+    if (isDemoMode && tour.isTourActive) {
+      const stepIdx = DEMO_TOUR_STEPS.findIndex((s) => s.targetSection === section);
+      if (stepIdx !== -1) {
+        tour.goToStep(stepIdx);
+      }
+    }
   };
 
   const handleCancelEdit = () => {
@@ -414,48 +419,11 @@ export default function App() {
   if (!user && !isDemoMode) {
     return (
       <>
-        {publicBlueprintOpen ? (
-          <div className="min-h-screen bg-[#FAF8F5]">
-            <header className="sticky top-0 z-30 bg-[#FAF8F5]/95 backdrop-blur-xs border-b border-[#E5E0D8]">
-              <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 px-6 py-4">
-                <button
-                  type="button"
-                  onClick={() => setPublicBlueprintOpen(false)}
-                  className="font-editorial text-2xl font-semibold tracking-tight text-[#1C1D1A] whitespace-nowrap shrink-0"
-                >
-                  OutDrobe
-                </button>
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setAuthModalMode('login')}
-                    className="text-sm font-medium text-[#5C5E58] hover:text-[#1C1D1A]"
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleOpenWardrobe}
-                    className="px-4 py-2 text-xs font-medium text-white bg-[#526B56] rounded-lg hover:bg-[#435947] whitespace-nowrap shrink-0"
-                  >
-                    Open Wardrobe
-                  </button>
-                </div>
-              </div>
-            </header>
-            <BlueprintView
-              isPublicPreview
-              onBack={() => setPublicBlueprintOpen(false)}
-            />
-          </div>
-        ) : (
-          <LandingPage
-            onOpenAuth={(mode) => setAuthModalMode(mode)}
-            onOpenWardrobe={handleOpenWardrobe}
-            onExploreDemoCloset={handleExploreDemoCloset}
-            onOpenBlueprint={() => setPublicBlueprintOpen(true)}
-          />
-        )}
+        <LandingPage
+          onOpenAuth={(mode) => setAuthModalMode(mode)}
+          onOpenWardrobe={handleOpenWardrobe}
+          onExploreDemoCloset={handleExploreDemoCloset}
+        />
 
         {authModalMode && (
           <AuthModal
@@ -785,6 +753,8 @@ export default function App() {
                 onCreateGarment={handleCreateGarment}
                 onUpdateGarment={handleUpdateGarment}
                 onDeleteGarment={handleDeleteGarment}
+                isTourActive={isDemoMode && tour.isTourActive && tour.currentStep.targetSection === 'wardrobe'}
+                onNextTourStep={tour.nextStep}
               />
             )}
 
@@ -795,6 +765,8 @@ export default function App() {
                 onSaveOutfit={handleCreateOutfit}
                 onUpdateOutfit={handleUpdateOutfit}
                 onCancelEdit={handleCancelEdit}
+                isTourActive={isDemoMode && tour.isTourActive && tour.currentStep.targetSection === 'builder'}
+                onNextTourStep={tour.nextStep}
               />
             )}
 
@@ -834,6 +806,8 @@ export default function App() {
                 onScheduleOutfit={handleScheduleOutfit}
                 onRemovePlan={handleRemoveCalendarPlan}
                 onLogPlannedOutfit={handleLogPlannedOutfit}
+                isTourActive={isDemoMode && tour.isTourActive && tour.currentStep.targetSection === 'calendar'}
+                onNextTourStep={tour.nextStep}
               />
             )}
 

@@ -1,21 +1,21 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import { HERO_WARDROBE_IMAGE, GARMENT_PRESET_ASSETS } from '../../data/garmentAssets';
 import { GarmentImage } from '../common/GarmentImage';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface LandingPageProps {
   onOpenAuth: (mode: 'login' | 'register') => void;
   onOpenWardrobe: () => void;
   onExploreDemoCloset: () => void;
-  onOpenBlueprint: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenAuth,
   onOpenWardrobe,
   onExploreDemoCloset,
-  onOpenBlueprint,
 }) => {
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const showcaseItems = [
     {
       key: 'sage_blazer',
@@ -61,13 +61,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </a>
             <button
               type="button"
-              onClick={onOpenBlueprint}
-              className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              Architecture
-            </button>
-            <button
-              type="button"
               onClick={() => onOpenAuth('login')}
               className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
@@ -110,26 +103,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <button
                   type="button"
                   onClick={onExploreDemoCloset}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors whitespace-nowrap shrink-0"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   Explore Live Demo Closet
                   <ArrowRight className="w-4 h-4" />
                 </button>
-                <button
-                  type="button"
-                  onClick={onOpenBlueprint}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors whitespace-nowrap shrink-0"
-                >
-                  Read 10-Part Architecture Spec
-                </button>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-[#E5E0D8] flex items-center gap-3 text-xs text-[#73766E]">
-                <span>12 Core Modules</span>
-                <span aria-hidden="true">·</span>
-                <span>Isolated User Data</span>
-                <span aria-hidden="true">·</span>
-                <span>Beginner-Friendly Full-Stack Blueprint</span>
               </div>
             </div>
 
@@ -174,8 +152,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </section>
 
-        {/* Section 2: Mechanism-to-Outcome Workflow */}
-        <section id="workflow" className="bg-[#F2EFE9] border-y border-[#E5E0D8] py-20">
+        {/* Section 2: Mechanism-to-Outcome Workflow / Features */}
+        <section id="features" className="bg-[#F2EFE9] border-y border-[#E5E0D8] py-20 relative">
+          <span id="workflow" className="absolute -top-16" />
           <div className="max-w-7xl mx-auto px-6">
             <div className="max-w-2xl">
               <p className="text-xs font-medium text-[#526B56] mb-2">How OutDrobe Works</p>
@@ -270,27 +249,115 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </section>
       </main>
 
-      <footer className="border-t border-[#E5E0D8] bg-[#FAF8F5] py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#73766E]">
-          <p>OutDrobe — The Pocket Wardrobe. Designed for intentional everyday dressing.</p>
-          <div className="flex items-center gap-6">
-            <button
-              type="button"
-              onClick={onOpenBlueprint}
-              className="hover:text-[#1C1D1A] transition-colors"
-            >
-              System Architecture Blueprint
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpenAuth('login')}
-              className="hover:text-[#1C1D1A] transition-colors"
-            >
-              Account Sign In
-            </button>
+      <footer className="border-t border-[#E5E0D8] bg-[#FAF8F5] pt-14 pb-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 pb-12">
+            {/* Brand Section */}
+            <div className="md:col-span-6 lg:col-span-6 space-y-3">
+              <div className="space-y-1">
+                <span className="font-editorial text-2xl sm:text-3xl font-semibold tracking-tight text-[#1C1D1A]">
+                  OutDrobe
+                </span>
+                <p className="font-mono text-[10px] tracking-widest uppercase font-semibold text-[#526B56]">
+                  THE POCKET WARDROBE
+                </p>
+              </div>
+              <p className="text-xs sm:text-sm text-[#5C5E58] leading-relaxed max-w-sm">
+                Your wardrobe, thoughtfully organized. Discover your style, plan your outfits, and make everyday dressing simpler.
+              </p>
+            </div>
+
+            {/* Explore Section */}
+            <div className="md:col-span-3 lg:col-span-3 space-y-3">
+              <h4 className="font-sans text-xs uppercase tracking-wider font-semibold text-[#1C1D1A]">
+                Explore
+              </h4>
+              <ul className="space-y-2 text-xs text-[#5C5E58]">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="hover:text-[#526B56] transition-colors py-0.5 cursor-pointer text-left"
+                  >
+                    Home
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById('features') || document.getElementById('workflow');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="hover:text-[#526B56] transition-colors py-0.5 cursor-pointer text-left"
+                  >
+                    Features
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={onExploreDemoCloset}
+                    className="hover:text-[#526B56] transition-colors py-0.5 cursor-pointer text-left"
+                  >
+                    Live Demo
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenWardrobe}
+                    className="hover:text-[#526B56] transition-colors py-0.5 cursor-pointer text-left"
+                  >
+                    Open Wardrobe
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Project Section */}
+            <div className="md:col-span-3 lg:col-span-3 space-y-3">
+              <h4 className="font-sans text-xs uppercase tracking-wider font-semibold text-[#1C1D1A]">
+                Project
+              </h4>
+              <ul className="space-y-2 text-xs text-[#5C5E58]">
+                <li>
+                  <a
+                    href="https://github.com/marufur-rahman-reshat/OutDrobe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-[#526B56] transition-colors py-0.5"
+                  >
+                    <span>GitHub Repository</span>
+                    <ExternalLink className="w-3 h-3 text-[#73766E]" />
+                  </a>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setShowPrivacyPolicy(true)}
+                    className="hover:text-[#526B56] transition-colors py-0.5 cursor-pointer text-left"
+                  >
+                    Privacy Policy
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Copyright Section */}
+          <div className="pt-8 border-t border-[#EFECE6] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#73766E]">
+            <p>© 2026 OutDrobe. All rights reserved.</p>
+            <p className="text-right">Designed with care for your everyday style.</p>
           </div>
         </div>
       </footer>
+
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicyModal
+        isOpen={showPrivacyPolicy}
+        onClose={() => setShowPrivacyPolicy(false)}
+      />
     </div>
   );
 };
