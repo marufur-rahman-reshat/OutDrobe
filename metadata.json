@@ -1,6 +1,6 @@
 {
   "name": "GeneratedOUT",
-  "description": "",
+  "description": "Your wardrobe, thoughtfully organized. Discover your style, plan your outfits, and make everyday dressing simpler.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
