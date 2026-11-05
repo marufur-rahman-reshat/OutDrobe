@@ -58,10 +58,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               {t('landing.footerFeatures', 'Workflow')}
             </a>
             <a
-              href="#capsule"
+              href="#preview"
               className="hover:text-[#1C1D1A] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
-              {t('landing.capsuleEyebrow', 'Capsule View')}
+              {t('landing.navWardrobePreview', 'Wardrobe Preview')}
             </a>
             <button
               type="button"
@@ -103,11 +103,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <p className="mt-5 text-base text-[#5C5E58] leading-relaxed max-w-xl">
                 {t(
                   'landing.heroSubtitle',
-                  'Catalog the garments you already own, compose balanced multi-layer outfits, schedule your week on a calm visual calendar, and understand true cost-per-wear.'
+                  'Bring your wardrobe together in one place. Organize your clothing, create outfits, plan what to wear, and discover more value in the pieces you already own.'
                 )}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onOpenWardrobe}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#526B56] hover:bg-[#435947] text-white transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+                >
+                  {t('common.openWardrobe', 'Open Wardrobe')}
+                </button>
                 <button
                   type="button"
                   onClick={onExploreDemoCloset}
@@ -131,49 +138,49 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           </div>
 
-          {/* Full-width 4-column proof & workflow metric row */}
-          <div className="mt-12 pt-10 border-t border-[#E5E0D8] grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
-              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">
-                {t('landing.metricSpeed', 'Under 60s')}
-              </p>
-              <p className="mt-1 text-sm text-[#5C5E58]">
+          {/* Feature Highlight Cards */}
+          <div className="mt-12 pt-10 border-t border-[#E5E0D8] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="space-y-1.5">
+              <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                {t('landing.featurePlanTitle', 'Plan with Ease')}
+              </h3>
+              <p className="text-sm text-[#5C5E58] leading-relaxed">
                 {t(
-                  'landing.metricSpeedDesc',
-                  'Morning outfit selection when scheduled on your weekly lookbook calendar'
+                  'landing.featurePlanDesc',
+                  'Create your next outfit and organize your weekly lookbook with ease.'
                 )}
               </p>
             </div>
-            <div>
-              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">
-                {t('landing.metricPrivacy', '100% Private')}
-              </p>
-              <p className="mt-1 text-sm text-[#5C5E58]">
+            <div className="space-y-1.5">
+              <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                {t('landing.featurePrivateTitle', 'Private by Design')}
+              </h3>
+              <p className="text-sm text-[#5C5E58] leading-relaxed">
                 {t(
-                  'landing.metricPrivacyDesc',
-                  'User-scoped data model isolating garments, photos, and wear logs by account UID'
+                  'landing.featurePrivateDesc',
+                  'Your wardrobe, clothing photos, and outfit history are scoped to your account.'
                 )}
               </p>
             </div>
-            <div>
-              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">
-                {t('landing.metricLayers', '5 Layers')}
-              </p>
-              <p className="mt-1 text-sm text-[#5C5E58]">
+            <div className="space-y-1.5">
+              <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                {t('landing.featureLayersTitle', '5 Outfit Layers')}
+              </h3>
+              <p className="text-sm text-[#5C5E58] leading-relaxed">
                 {t(
-                  'landing.metricLayersDesc',
-                  'Visual Outfit Builder supporting Outerwear, Tops, Bottoms, Footwear, and Accessories'
+                  'landing.featureLayersDesc',
+                  'Combine Outerwear, Tops, Bottoms, Footwear, and Accessories.'
                 )}
               </p>
             </div>
-            <div>
-              <p className="font-mono-tabular text-2xl font-medium text-[#1C1D1A]">
-                {t('landing.metricValue', 'Real Cost / Wear')}
-              </p>
-              <p className="mt-1 text-sm text-[#5C5E58]">
+            <div className="space-y-1.5">
+              <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                {t('landing.featureCpwTitle', 'Cost per Wear')}
+              </h3>
+              <p className="text-sm text-[#5C5E58] leading-relaxed">
                 {t(
-                  'landing.metricValueDesc',
-                  'Automatic wear-counter updates reveal your highest-value wardrobe staples'
+                  'landing.featureCpwDesc',
+                  'Track how often you wear each item and understand its value over time.'
                 )}
               </p>
             </div>
@@ -199,61 +206,85 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </h2>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
-                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">
-                  {t('landing.workflowStep1Tag', '01. Digitize & Organize')}
-                </p>
-                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
-                  {t('landing.workflowStep1Title', 'Upload clothing with clean attributes')}
-                </h3>
-                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
-                  {t(
-                    'landing.workflowStep1Desc',
-                    'Photograph your pieces or test with studio presets. Filter effortlessly by category, season, fabric, and color harmony without digging through drawers.'
-                  )}
-                </p>
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <p className="font-mono-tabular text-xs font-semibold text-[#526B56] mb-3">
+                    {t('landing.workflowStep1Tag', 'Step 1 — Build Your Wardrobe')}
+                  </p>
+                  <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                    {t('landing.workflowStep1Title', 'Add photos of your clothing')}
+                  </h3>
+                  <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                    {t(
+                      'landing.workflowStep1Desc',
+                      'Add photos of your clothing and organize each piece by category, season, fabric, and color.'
+                    )}
+                  </p>
+                </div>
               </div>
 
-              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
-                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">
-                  {t('landing.workflowStep2Tag', '02. Compose & Favorite')}
-                </p>
-                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
-                  {t('landing.workflowStep2Title', 'Build outfits side-by-side before dressing')}
-                </h3>
-                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
-                  {t(
-                    'landing.workflowStep2Desc',
-                    'Pair outerwear, tops, trousers, and shoes on an editorial canvas. Save favorite combinations for campus lectures, studio reviews, or weekend travel.'
-                  )}
-                </p>
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <p className="font-mono-tabular text-xs font-semibold text-[#526B56] mb-3">
+                    {t('landing.workflowStep2Tag', 'Step 2 — Create Your Outfits')}
+                  </p>
+                  <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                    {t('landing.workflowStep2Title', 'Mix and match clothing')}
+                  </h3>
+                  <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                    {t(
+                      'landing.workflowStep2Desc',
+                      'Mix and match clothing from your wardrobe to create complete looks. Save your favorite combinations for later.'
+                    )}
+                  </p>
+                </div>
               </div>
 
-              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6">
-                <p className="font-mono-tabular text-xs text-[#526B56] mb-3">
-                  {t('landing.workflowStep3Tag', '03. Plan & Track Rotation')}
-                </p>
-                <h3 className="font-sans text-lg font-semibold text-[#1C1D1A]">
-                  {t('landing.workflowStep3Title', 'Schedule your calendar & uncover sleepers')}
-                </h3>
-                <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
-                  {t(
-                    'landing.workflowStep3Desc',
-                    'Assign outfits to upcoming dates, log daily wears in one click, and let smart suggestions revive unworn garments sitting at the back of your closet.'
-                  )}
-                </p>
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <p className="font-mono-tabular text-xs font-semibold text-[#526B56] mb-3">
+                    {t('landing.workflowStep3Tag', 'Step 3 — Plan Your Week')}
+                  </p>
+                  <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                    {t('landing.workflowStep3Title', 'Add outfits to calendar')}
+                  </h3>
+                  <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                    {t(
+                      'landing.workflowStep3Desc',
+                      'Add your saved outfits to the calendar and keep track of what you plan to wear.'
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-6 flex flex-col justify-between shadow-2xs">
+                <div>
+                  <p className="font-mono-tabular text-xs font-semibold text-[#526B56] mb-3">
+                    {t('landing.workflowStep4Tag', 'Step 4 — Track Your Style')}
+                  </p>
+                  <h3 className="font-sans text-base sm:text-lg font-semibold text-[#1C1D1A]">
+                    {t('landing.workflowStep4Title', 'Understand wardrobe value')}
+                  </h3>
+                  <p className="mt-2 text-sm text-[#5C5E58] leading-relaxed">
+                    {t(
+                      'landing.workflowStep4Desc',
+                      'Record what you wear, explore outfit suggestions, and understand the value of your wardrobe over time.'
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Section 3: Curated Capsule Preview */}
-        <section id="capsule" className="max-w-7xl mx-auto px-6 py-20">
+        {/* Section 3: Curated Wardrobe Preview */}
+        <section id="preview" className="max-w-7xl mx-auto px-6 py-20 relative">
+          <span id="capsule" className="absolute -top-16" />
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-xs font-medium text-[#526B56] mb-2">
-                {t('landing.capsuleEyebrow', 'Inside the Wardrobe')}
+                {t('landing.capsuleEyebrow', 'Wardrobe Preview')}
               </p>
               <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
                 {t('landing.capsuleTitle', 'Calm, editorial garment cards')}
