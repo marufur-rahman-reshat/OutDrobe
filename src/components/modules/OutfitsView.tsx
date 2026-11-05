@@ -7,6 +7,7 @@ import type {
   Outfit,
 } from '../../types/outdrobe';
 import { OutfitCard } from '../common/OutfitCard';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface OutfitsViewProps {
   outfits: Outfit[];
@@ -41,6 +42,7 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
   onLogWearToday,
   onScheduleOutfit,
 }) => {
+  const { t } = useLanguage();
   const [selectedOccasion, setSelectedOccasion] = useState<'All' | OccasionTag>('All');
   const [schedulingOutfit, setSchedulingOutfit] = useState<Outfit | null>(null);
   const [scheduleDate, setScheduleDate] = useState(() => {
@@ -71,7 +73,12 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
 
   const handleWearClick = async (outfit: Outfit) => {
     await onLogWearToday(outfit);
-    setToast(`Logged wear for "${outfit.name}" and updated garment wear counts.`);
+    setToast(
+      t('outfits.wearLoggedToast', 'Logged wear for "{name}" and updated garment wear counts.').replace(
+        '{name}',
+        outfit.name
+      )
+    );
   };
 
   const handleConfirmSchedule = async (e: React.FormEvent) => {
@@ -82,9 +89,26 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
       schedulingOutfit.id,
       scheduleNote.trim() || schedulingOutfit.occasion
     );
-    setToast(`Scheduled "${schedulingOutfit.name}" for ${scheduleDate}.`);
+    setToast(
+      t('outfits.scheduledToast', 'Scheduled "{name}" for {date}.')
+        .replace('{name}', schedulingOutfit.name)
+        .replace('{date}', scheduleDate)
+    );
     setSchedulingOutfit(null);
     setScheduleNote('');
+  };
+
+  const getOccasionLabel = (occ: 'All' | OccasionTag): string => {
+    if (occ === 'All') return t('occasions.all', 'All');
+    const keyMap: Record<OccasionTag, string> = {
+      'Daily Studio': 'occasions.dailyStudio',
+      Professional: 'occasions.professional',
+      Campus: 'occasions.campus',
+      Evening: 'occasions.evening',
+      Weekend: 'occasions.weekend',
+      Travel: 'occasions.travel',
+    };
+    return t(keyMap[occ] || occ, occ);
   };
 
   return (
@@ -92,25 +116,35 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
           <p className="text-xs font-medium text-[#526B56] mb-1">
-            {favoritesOnly ? 'Curated Staples' : 'Outfit Management'}
+            {favoritesOnly
+              ? t('outfits.curatedStaples', 'Curated Staples')
+              : t('outfits.outfitManagement', 'Outfit Management')}
           </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            {favoritesOnly ? 'Favorite Outfits' : 'Saved Lookbook'}
+            {favoritesOnly
+              ? t('outfits.favoriteOutfitsTitle', 'Favorite Outfits')
+              : t('outfits.savedLookbookTitle', 'Saved Lookbook')}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
             {favoritesOnly
-              ? 'Your highest-confidence combinations ready for effortless scheduling.'
-              : 'Browse, log wears, or assign complete outfits onto your planning calendar.'}
+              ? t(
+                  'outfits.favoritesSubtitle',
+                  'Your highest-confidence combinations ready for effortless scheduling.'
+                )
+              : t(
+                  'outfits.outfitsSubtitle',
+                  'Browse, log wears, or assign complete outfits onto your planning calendar.'
+                )}
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => onNavigate('builder')}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          New Outfit
+          {t('outfits.newOutfit', 'New Outfit')}
         </button>
       </div>
 
@@ -120,9 +154,9 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
           <button
             type="button"
             onClick={() => setToast(null)}
-            className="text-xs font-medium underline"
+            className="text-xs font-medium underline cursor-pointer"
           >
-            Dismiss
+            {t('common.dismiss', 'Dismiss')}
           </button>
         </div>
       )}
@@ -134,13 +168,13 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
             key={occ}
             type="button"
             onClick={() => setSelectedOccasion(occ)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
               selectedOccasion === occ
                 ? 'bg-white text-[#1C1D1A] shadow-xs'
                 : 'text-[#5C5E58] hover:text-[#1C1D1A]'
             }`}
           >
-            {occ}
+            {getOccasionLabel(occ)}
           </button>
         ))}
       </div>
@@ -163,29 +197,34 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
       ) : (
         <div className="bg-white border border-[#E5E0D8] rounded-xl py-16 px-6 text-center">
           <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-            {favoritesOnly ? 'No favorite outfits saved yet' : 'No outfits match this filter'}
+            {favoritesOnly
+              ? t('outfits.noFavoritesTitle', 'No favorite outfits saved yet')
+              : t('outfits.noMatchTitle', 'No outfits match this filter')}
           </h2>
           <p className="mt-1.5 text-sm text-[#5C5E58] max-w-md mx-auto">
             {favoritesOnly
-              ? 'Tap the heart button on any outfit card or compose a new combination in Outfit Builder.'
-              : 'Compose your next multi-layer look in the visual Outfit Builder.'}
+              ? t(
+                  'outfits.noFavoritesDesc',
+                  'Tap the heart button on any outfit card or compose a new combination in Outfit Builder.'
+                )
+              : t('outfits.noMatchDesc', 'Compose your next multi-layer look in the visual Outfit Builder.')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
             {selectedOccasion !== 'All' && (
               <button
                 type="button"
                 onClick={() => setSelectedOccasion('All')}
-                className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A]"
+                className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] cursor-pointer"
               >
-                Show All Occasions
+                {t('outfits.showAllOccasions', 'Show All Occasions')}
               </button>
             )}
             <button
               type="button"
               onClick={() => onNavigate('builder')}
-              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947]"
+              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] cursor-pointer"
             >
-              Open Outfit Builder
+              {t('outfits.openBuilder', 'Open Outfit Builder')}
             </button>
           </div>
         </div>
@@ -202,19 +241,26 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
             <button
               type="button"
               onClick={() => setSchedulingOutfit(null)}
-              aria-label="Close schedule modal"
-              className="absolute top-4 right-4 w-9 h-9 rounded-lg flex items-center justify-center text-[#5C5E58] hover:bg-[#F2EFE9]"
+              aria-label={t('outfits.closeModal', 'Close schedule modal')}
+              className="absolute top-4 right-4 w-9 h-9 rounded-lg flex items-center justify-center text-[#5C5E58] hover:bg-[#F2EFE9] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
-            <p className="text-xs font-medium text-[#526B56] mb-1">Outfit Calendar</p>
+            <p className="text-xs font-medium text-[#526B56] mb-1">
+              {t('nav.calendar', 'Outfit Calendar')}
+            </p>
             <h3 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-              Schedule “{schedulingOutfit.name}”
+              {t('outfits.scheduleModalTitle', 'Schedule “{name}”').replace(
+                '{name}',
+                schedulingOutfit.name
+              )}
             </h3>
 
             <form onSubmit={handleConfirmSchedule} className="mt-5 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Target Date</label>
+                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                  {t('outfits.targetDate', 'Target Date')}
+                </label>
                 <input
                   type="date"
                   required
@@ -226,13 +272,13 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                  Event or Day Note
+                  {t('outfits.dayNote', 'Event or Day Note')}
                 </label>
                 <input
                   type="text"
                   value={scheduleNote}
                   onChange={(e) => setScheduleNote(e.target.value)}
-                  placeholder="e.g., Studio Seminar & Dinner"
+                  placeholder={t('outfits.dayNotePlaceholder', 'e.g., Studio Seminar & Dinner')}
                   className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
                 />
               </div>
@@ -241,15 +287,15 @@ export const OutfitsView: React.FC<OutfitsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSchedulingOutfit(null)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A]"
+                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947]"
+                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] cursor-pointer"
                 >
-                  Assign to Calendar
+                  {t('outfits.assignToCalendar', 'Assign to Calendar')}
                 </button>
               </div>
             </form>

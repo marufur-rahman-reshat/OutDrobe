@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, Shield, Lock, Database, Image, ExternalLink } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface PrivacyPolicyModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { t } = useLanguage();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -46,20 +49,20 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#E5E0D8] bg-[#FAF8F5]">
           <div className="space-y-1">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#526B56] font-semibold">
-              OutDrobe · Privacy & Data Practices
+              {t('privacy.subtitle', 'OutDrobe · Privacy & Data Practices')}
             </span>
             <h2
               id="privacy-policy-title"
               className="font-editorial text-2xl font-semibold text-[#1C1D1A] tracking-tight"
             >
-              Privacy Policy
+              {t('privacy.title', 'Privacy Policy')}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-lg text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#EFECE6] transition-colors cursor-pointer"
-            aria-label="Close Privacy Policy"
+            aria-label={t('common.close', 'Close Privacy Policy')}
           >
             <X className="w-5 h-5" />
           </button>

@@ -2,6 +2,7 @@ import React from 'react';
 import { CalendarPlus, CheckCircle2, Heart, Pencil, Trash2 } from 'lucide-react';
 import type { ClothingItem, Outfit } from '../../types/outdrobe';
 import { GarmentImage } from './GarmentImage';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface OutfitCardProps {
   outfit: Outfit;
@@ -22,11 +23,20 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useLanguage();
+
   const pieces = outfit.itemIds
     .map((id) => wardrobeMap.get(id))
     .filter((item): item is ClothingItem => Boolean(item));
 
   const previewPieces = pieces.slice(0, 4);
+
+  const favoriteLabel = outfit.isFavorite
+    ? t('outfitCard.removeFavorite', 'Remove {name} from favorites').replace('{name}', outfit.name)
+    : t('outfitCard.addFavorite', 'Favorite {name}').replace('{name}', outfit.name);
+
+  const editLabel = t('outfitCard.editOutfit', 'Edit outfit {name}').replace('{name}', outfit.name);
+  const deleteLabel = t('outfitCard.deleteOutfit', 'Delete outfit {name}').replace('{name}', outfit.name);
 
   return (
     <article className="group bg-white border border-[#E5E0D8] rounded-xl overflow-hidden flex flex-col transition-transform duration-150 ease-out hover:-translate-y-0.5">
@@ -48,15 +58,15 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
               key={`slot_${idx}`}
               className="rounded-lg bg-[#FAF8F5]/70 border border-dashed border-[#D8D3C8] flex items-center justify-center text-[11px] text-[#8A8D84]"
             >
-              Open Layer
+              {t('outfitCard.openLayer', 'Open Layer')}
             </div>
           ))}
 
         <button
           type="button"
           onClick={() => onToggleFavorite(outfit)}
-          aria-label={outfit.isFavorite ? `Remove ${outfit.name} from favorites` : `Favorite ${outfit.name}`}
-          className="absolute top-5 right-5 w-10 h-10 rounded-full bg-[#FAF8F5]/95 border border-[#E5E0D8] flex items-center justify-center text-[#1C1D1A] hover:bg-white transition-colors"
+          aria-label={favoriteLabel}
+          className="absolute top-5 right-5 w-10 h-10 rounded-full bg-[#FAF8F5]/95 border border-[#E5E0D8] flex items-center justify-center text-[#1C1D1A] hover:bg-white transition-colors cursor-pointer"
         >
           <Heart
             className={`w-4 h-4 ${
@@ -73,7 +83,9 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
             <span aria-hidden="true">·</span>
             <span>{outfit.season}</span>
             <span aria-hidden="true">·</span>
-            <span className="font-mono-tabular">{pieces.length} pieces</span>
+            <span className="font-mono-tabular">
+              {pieces.length} {t('outfitCard.pieces', 'pieces')}
+            </span>
           </div>
 
           <h3 className="font-sans text-lg font-semibold text-[#1C1D1A] leading-snug">
@@ -87,11 +99,23 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
           )}
 
           <div className="mt-3 text-xs text-[#73766E] font-mono-tabular">
-            <span>Worn {outfit.wearCount} times</span>
+            <span>
+              {t('outfitCard.wornTimes', `Worn ${outfit.wearCount} times`).replace(
+                '{count}',
+                String(outfit.wearCount)
+              )}
+            </span>
             {outfit.lastWornDate && (
               <>
-                <span className="mx-1.5" aria-hidden="true">·</span>
-                <span>Last worn {outfit.lastWornDate}</span>
+                <span className="mx-1.5" aria-hidden="true">
+                  ·
+                </span>
+                <span>
+                  {t('outfitCard.lastWorn', `Last worn ${outfit.lastWornDate}`).replace(
+                    '{date}',
+                    outfit.lastWornDate
+                  )}
+                </span>
               </>
             )}
           </div>
@@ -102,18 +126,18 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
             <button
               type="button"
               onClick={() => onLogWearToday(outfit)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              Log Wear
+              {t('outfitCard.logWear', 'Log Wear')}
             </button>
             <button
               type="button"
               onClick={() => onSchedule(outfit)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               <CalendarPlus className="w-3.5 h-3.5" />
-              Schedule
+              {t('outfitCard.schedule', 'Schedule')}
             </button>
           </div>
 
@@ -122,8 +146,8 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
               <button
                 type="button"
                 onClick={() => onEdit(outfit)}
-                aria-label={`Edit outfit ${outfit.name}`}
-                className="p-2 rounded-lg text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors shrink-0"
+                aria-label={editLabel}
+                className="p-2 rounded-lg text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors shrink-0 cursor-pointer"
               >
                 <Pencil className="w-4 h-4" />
               </button>
@@ -131,8 +155,8 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
             <button
               type="button"
               onClick={() => onDelete(outfit)}
-              aria-label={`Delete outfit ${outfit.name}`}
-              className="p-2 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0] transition-colors shrink-0"
+              aria-label={deleteLabel}
+              className="p-2 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0] transition-colors shrink-0 cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
             </button>

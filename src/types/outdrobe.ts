@@ -102,4 +102,5 @@ export type AppSection =
   | 'history'
   | 'suggestions'
   | 'statistics'
+  | 'help'
   | 'blueprint';

@@ -3,6 +3,7 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import type { CalendarPlan, ClothingItem, Outfit } from '../../types/outdrobe';
 import { GarmentImage } from '../common/GarmentImage';
 import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface CalendarViewProps {
   calendar: CalendarPlan[];
@@ -15,7 +16,7 @@ interface CalendarViewProps {
   onNextTourStep?: () => void;
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
   calendar,
@@ -27,6 +28,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   isTourActive = false,
   onNextTourStep,
 }) => {
+  const { t, language } = useLanguage();
   const today = new Date();
   const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
     today.getDate()
@@ -72,7 +74,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     return cells;
   }, [viewYear, viewMonth]);
 
-  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleDateString('en-US', {
+  const localeCode = language === 'bn' ? 'bn-BD' : language === 'hi' ? 'hi-IN' : 'en-US';
+  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleDateString(localeCode, {
     month: 'long',
     year: 'numeric',
   });
@@ -136,12 +139,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
-          <p className="text-xs font-medium text-[#526B56] mb-1">Weekly & Monthly Lookbook Planner</p>
+          <p className="text-xs font-medium text-[#526B56] mb-1">
+            {t('calendar.planner', 'Weekly & Monthly Lookbook Planner')}
+          </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            Outfit Calendar
+            {t('calendar.calendarTitle', 'Outfit Calendar')}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
-            Select any calendar date to schedule an outfit ahead of lectures, meetings, or trips.
+            {t(
+              'calendar.calendarSubtitle',
+              'Select any calendar date to schedule an outfit ahead of lectures, meetings, or trips.'
+            )}
           </p>
         </div>
 
@@ -149,8 +157,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           <button
             type="button"
             onClick={() => stepMonth(-1)}
-            aria-label="Previous month"
-            className="w-9 h-9 rounded-lg bg-white border border-[#D8D3C8] flex items-center justify-center hover:bg-[#F2EFE9]"
+            aria-label={t('calendar.prevMonth', 'Previous month')}
+            className="w-9 h-9 rounded-lg bg-white border border-[#D8D3C8] flex items-center justify-center hover:bg-[#F2EFE9] cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -160,8 +168,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           <button
             type="button"
             onClick={() => stepMonth(1)}
-            aria-label="Next month"
-            className="w-9 h-9 rounded-lg bg-white border border-[#D8D3C8] flex items-center justify-center hover:bg-[#F2EFE9]"
+            aria-label={t('calendar.nextMonth', 'Next month')}
+            className="w-9 h-9 rounded-lg bg-white border border-[#D8D3C8] flex items-center justify-center hover:bg-[#F2EFE9] cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -179,16 +187,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <div className="flex items-center justify-between text-xs text-[#73766E] pb-3 mb-3 border-b border-[#E5E0D8]">
               <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
-                Interactive Lookbook Calendar · Click Any Date
+                {t('calendar.interactiveBanner', 'Interactive Lookbook Calendar · Click Any Date')}
               </span>
-              <span className="hidden sm:inline">Shows planned looks & wear status</span>
+              <span className="hidden sm:inline">
+                {t('calendar.interactiveSubtitle', 'Shows planned looks & wear status')}
+              </span>
             </div>
           )}
 
           <div className="grid grid-cols-7 gap-2 mb-3">
             {WEEKDAYS.map((day) => (
               <div key={day} className="text-center text-xs font-medium text-[#73766E] py-1">
-                {day}
+                {t(`calendar.weekdays.${day}`, day)}
               </div>
             ))}
           </div>
@@ -209,7 +219,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   key={iso}
                   type="button"
                   onClick={() => setSelectedDate(iso)}
-                  className={`aspect-square rounded-lg p-2 text-left flex flex-col justify-between border transition-colors ${
+                  className={`aspect-square rounded-lg p-2 text-left flex flex-col justify-between border transition-colors cursor-pointer ${
                     isSelected
                       ? 'bg-[#EBF0EC] border-[#526B56]'
                       : plannedOutfit
@@ -252,10 +262,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {isTourActive && (
             <div className="p-2.5 rounded-lg bg-[#EBF0EC] border border-[#CBD8CD] text-xs text-[#2D4030] flex items-center gap-2">
               <span className="font-mono text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-white text-[#354938] border border-[#CBD8CD] shrink-0">
-                Day Inspector
+                {t('calendar.dayInspector', 'Day Inspector')}
               </span>
               <span>
-                Displays the pieces and styling notes for the selected date.
+                {t(
+                  'calendar.dayInspectorTip',
+                  'Displays the pieces and styling notes for the selected date.'
+                )}
               </span>
             </div>
           )}
@@ -263,7 +276,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           <div>
             <p className="font-mono-tabular text-xs font-medium text-[#526B56]">{selectedDate}</p>
             <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A] mt-0.5">
-              Day Plan
+              {t('calendar.dayPlan', 'Day Plan')}
             </h2>
           </div>
 
@@ -298,21 +311,21 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onLogPlannedOutfit(activePlan, activeOutfit)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947]"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    Log Worn
+                    {t('calendar.logWorn', 'Log Worn')}
                   </button>
                 ) : (
                   <span className="flex-1 text-xs font-medium text-[#526B56]">
-                    Completed & logged
+                    {t('calendar.completedLogged', 'Completed & logged')}
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={() => onRemovePlan(activePlan.id)}
-                  aria-label="Remove scheduled outfit"
-                  className="p-2.5 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0]"
+                  aria-label={t('calendar.removePlan', 'Remove scheduled outfit')}
+                  className="p-2.5 rounded-lg text-[#73766E] hover:text-[#B93829] hover:bg-[#FDF2F0] cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -320,22 +333,29 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
           ) : (
             <p className="text-sm text-[#5C5E58]">
-              No outfit assigned to {selectedDate} yet. Choose a saved look below.
+              {t(
+                'calendar.noOutfitAssigned',
+                `No outfit assigned to ${selectedDate} yet. Choose a saved look below.`
+              ).replace('{date}', selectedDate)}
             </p>
           )}
 
           {outfits.length > 0 && (
             <form onSubmit={handleAssign} className="pt-5 border-t border-[#EFECE6] space-y-4">
               <p className="text-xs font-semibold text-[#1C1D1A]">
-                {activePlan ? 'Replace Scheduled Outfit' : 'Assign Saved Outfit'}
+                {activePlan
+                  ? t('calendar.replaceOutfit', 'Replace Scheduled Outfit')
+                  : t('calendar.assignOutfit', 'Assign Saved Outfit')}
               </p>
 
               <div>
-                <label className="block text-xs text-[#5C5E58] mb-1">Outfit</label>
+                <label className="block text-xs text-[#5C5E58] mb-1">
+                  {t('calendar.outfitLabel', 'Outfit')}
+                </label>
                 <select
                   value={chosenOutfitId || outfits[0]?.id}
                   onChange={(e) => setChosenOutfitId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg"
+                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg cursor-pointer"
                 >
                   {outfits.map((o) => (
                     <option key={o.id} value={o.id}>
@@ -346,12 +366,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs text-[#5C5E58] mb-1">Day Context / Event</label>
+                <label className="block text-xs text-[#5C5E58] mb-1">
+                  {t('calendar.contextLabel', 'Day Context / Event')}
+                </label>
                 <input
                   type="text"
                   value={occasionNote}
                   onChange={(e) => setOccasionNote(e.target.value)}
-                  placeholder="e.g., Client Workshop"
+                  placeholder={t('calendar.contextPlaceholder', 'e.g., Client Workshop')}
                   className="w-full px-3 py-2 text-sm bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg"
                 />
               </div>
@@ -359,9 +381,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-2.5 px-4 rounded-lg text-xs font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors"
+                className="w-full py-2.5 px-4 rounded-lg text-xs font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] transition-colors cursor-pointer"
               >
-                {saving ? 'Saving...' : `Schedule for ${selectedDate}`}
+                {saving
+                  ? t('common.saving', 'Saving...')
+                  : t('calendar.scheduleForDate', `Schedule for ${selectedDate}`).replace(
+                      '{date}',
+                      selectedDate
+                    )}
               </button>
             </form>
           )}

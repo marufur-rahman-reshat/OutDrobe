@@ -9,6 +9,7 @@ import type {
 } from '../../types/outdrobe';
 import { GarmentImage } from '../common/GarmentImage';
 import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface OutfitBuilderViewProps {
   wardrobe: ClothingItem[];
@@ -48,6 +49,7 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
   isTourActive = false,
   onNextTourStep,
 }) => {
+  const { t } = useLanguage();
   const safeWardrobe = Array.isArray(wardrobe) ? wardrobe : [];
 
   const [activeLayer, setActiveLayer] = useState<ClothingCategory>('Tops');
@@ -184,12 +186,22 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
 
       if (editingOutfit && onUpdateOutfit) {
         await onUpdateOutfit(editingOutfit.id, payload);
-        setSavedBanner(`Updated "${resolvedName}" successfully.`);
+        setSavedBanner(
+          t('builder.updatedSuccess', 'Updated "{name}" successfully.').replace(
+            '{name}',
+            resolvedName
+          )
+        );
       } else {
         await onSaveOutfit(payload);
         setOutfitName('');
         setNotes('');
-        setSavedBanner(`Saved "${resolvedName}" to your Outfits collection.`);
+        setSavedBanner(
+          t('builder.savedSuccess', 'Saved "{name}" to your Outfits collection.').replace(
+            '{name}',
+            resolvedName
+          )
+        );
       }
     } finally {
       setSaving(false);
@@ -197,6 +209,18 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
   };
 
   const totalOutfitValue = selectedItems.reduce((sum, i) => sum + i.purchasePrice, 0);
+
+  const getOccasionLabel = (occ: OccasionTag): string => {
+    const keyMap: Record<OccasionTag, string> = {
+      'Daily Studio': 'occasions.dailyStudio',
+      Professional: 'occasions.professional',
+      Campus: 'occasions.campus',
+      Evening: 'occasions.evening',
+      Weekend: 'occasions.weekend',
+      Travel: 'occasions.travel',
+    };
+    return t(keyMap[occ] || occ, occ);
+  };
 
   return (
     <div className="space-y-8">
@@ -231,15 +255,25 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
           <p className="text-xs font-medium text-[#526B56] mb-1">
-            {editingOutfit ? 'Edit Lookbook Ensemble' : 'Visual Lookbook Studio'}
+            {editingOutfit
+              ? t('builder.editLookbook', 'Edit Lookbook Ensemble')
+              : t('builder.visualStudio', 'Visual Lookbook Studio')}
           </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            {editingOutfit ? `Edit "${editingOutfit.name}"` : 'Outfit Builder'}
+            {editingOutfit
+              ? `${t('common.edit', 'Edit')} “${editingOutfit.name}”`
+              : t('builder.builderTitle', 'Outfit Builder')}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
             {editingOutfit
-              ? 'Update pieces, occasion, season, or styling notes for this saved ensemble.'
-              : 'Select one piece per layer to compose balanced silhouettes and test color harmony.'}
+              ? t(
+                  'builder.editSubtitle',
+                  'Update pieces, occasion, season, or styling notes for this saved ensemble.'
+                )
+              : t(
+                  'builder.builderSubtitle',
+                  'Select one piece per layer to compose balanced silhouettes and test color harmony.'
+                )}
           </p>
         </div>
 
@@ -247,18 +281,18 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
           <button
             type="button"
             onClick={handleShuffle}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <Shuffle className="w-3.5 h-3.5" />
-            Shuffle Capsule
+            {t('builder.shuffleCapsule', 'Shuffle Capsule')}
           </button>
           <button
             type="button"
             onClick={handleClear}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#5C5E58] hover:text-[#1C1D1A] transition-colors whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#5C5E58] hover:text-[#1C1D1A] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Clear Canvas
+            {t('builder.clearCanvas', 'Clear Canvas')}
           </button>
         </div>
       </div>
@@ -269,9 +303,9 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
           <button
             type="button"
             onClick={() => setSavedBanner(null)}
-            className="text-xs font-medium underline"
+            className="text-xs font-medium underline cursor-pointer"
           >
-            Dismiss
+            {t('common.dismiss', 'Dismiss')}
           </button>
         </div>
       )}
@@ -287,9 +321,11 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
             <div className="flex items-center justify-between text-xs text-[#73766E] px-1 -mb-2">
               <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
-                Layer Selection Rack · Pick 1 Piece per Layer
+                {t('builder.layerRack', 'Layer Selection Rack · Pick 1 Piece per Layer')}
               </span>
-              <span className="hidden sm:inline">Outerwear · Tops · Bottoms · Shoes</span>
+              <span className="hidden sm:inline">
+                {t('builder.layerRackSubtitle', 'Outerwear · Tops · Bottoms · Shoes')}
+              </span>
             </div>
           )}
 
@@ -301,13 +337,13 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                   key={cat}
                   type="button"
                   onClick={() => setActiveLayer(cat)}
-                  className={`px-3.5 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                  className={`px-3.5 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer ${
                     activeLayer === cat
                       ? 'bg-white text-[#1C1D1A] shadow-xs'
                       : 'text-[#5C5E58] hover:text-[#1C1D1A]'
                   }`}
                 >
-                  <span>{cat}</span>
+                  <span>{t(`categories.${cat.toLowerCase()}`, cat)}</span>
                   {hasSelection && <Check className="w-3 h-3 text-[#526B56]" />}
                 </button>
               );
@@ -323,7 +359,7 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                     key={item.id}
                     type="button"
                     onClick={() => toggleSelectItem(item)}
-                    className={`text-left rounded-xl overflow-hidden border transition-all flex flex-col bg-white ${
+                    className={`text-left rounded-xl overflow-hidden border transition-all flex flex-col bg-white cursor-pointer ${
                       isSelected
                         ? 'border-[#526B56] ring-2 ring-[#526B56]/30'
                         : 'border-[#E5E0D8] hover:border-[#B8B2A6]'
@@ -346,7 +382,7 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                     <div className="p-3">
                       <p className="text-xs font-semibold text-[#1C1D1A] truncate">{item.name}</p>
                       <p className="text-[11px] text-[#73766E] mt-0.5 truncate">
-                        {item.color} · {item.wearCount} wears
+                        {item.color} · {item.wearCount} {t('clothingCard.wearsUnit', 'wears')}
                       </p>
                     </div>
                   </button>
@@ -356,10 +392,16 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
           ) : (
             <div className="bg-white border border-[#E5E0D8] rounded-xl py-12 px-6 text-center">
               <p className="text-sm font-medium text-[#1C1D1A]">
-                No {activeLayer.toLowerCase()} in your wardrobe yet
+                {t('builder.noLayerItems', 'No {layer} in your wardrobe yet').replace(
+                  '{layer}',
+                  t(`categories.${activeLayer.toLowerCase()}`, activeLayer)
+                )}
               </p>
               <p className="mt-1 text-xs text-[#5C5E58]">
-                Switch to another layer tab or add {activeLayer.toLowerCase()} in your Garment Archive.
+                {t(
+                  'builder.noLayerItemsDesc',
+                  'Switch to another layer tab or add {layer} in your Garment Archive.'
+                ).replace('{layer}', t(`categories.${activeLayer.toLowerCase()}`, activeLayer))}
               </p>
             </div>
           )}
@@ -387,11 +429,14 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#526B56]" />
               <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-                Lookbook Canvas
+                {t('builder.lookbookCanvas', 'Lookbook Canvas')}
               </h2>
             </div>
             <span className="font-mono-tabular text-xs text-[#73766E]">
-              {selectedItems.length} / 5 layers
+              {t('builder.layersSelected', '{count} / 5 layers').replace(
+                '{count}',
+                String(selectedItems.length)
+              )}
             </span>
           </div>
 
@@ -417,14 +462,16 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                         <p className="text-[11px] font-medium text-[#1C1D1A] truncate">
                           {piece.name}
                         </p>
-                        <p className="text-[10px] text-[#73766E]">{piece.category}</p>
+                        <p className="text-[10px] text-[#73766E]">
+                          {t(`categories.${piece.category.toLowerCase()}`, piece.category)}
+                        </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => toggleSelectItem(piece)}
-                        className="text-[10px] text-[#73766E] hover:text-[#B93829] shrink-0"
+                        className="text-[10px] text-[#73766E] hover:text-[#B93829] shrink-0 cursor-pointer"
                       >
-                        Remove
+                        {t('builder.removePiece', 'Remove')}
                       </button>
                     </div>
                   </div>
@@ -434,7 +481,7 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
               {/* Color Harmony Swatch Bar */}
               <div className="flex items-center justify-between text-xs text-[#5C5E58] pt-1">
                 <div className="flex items-center gap-2">
-                  <span>Color Harmony:</span>
+                  <span>{t('builder.colorHarmony', 'Color Harmony:')}</span>
                   <div className="flex items-center -space-x-1">
                     {selectedItems.map((i) => (
                       <span
@@ -446,14 +493,21 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                     ))}
                   </div>
                 </div>
-                <span className="font-mono-tabular">Value: ${totalOutfitValue}</span>
+                <span className="font-mono-tabular">
+                  {t('builder.totalValue', 'Value: ${value}').replace('{value}', String(totalOutfitValue))}
+                </span>
               </div>
             </div>
           ) : (
             <div className="py-12 px-4 text-center bg-[#FAF8F5] rounded-xl border border-dashed border-[#D8D3C8]">
-              <p className="text-sm font-medium text-[#1C1D1A]">Canvas is empty</p>
+              <p className="text-sm font-medium text-[#1C1D1A]">
+                {t('builder.canvasEmptyTitle', 'Canvas is empty')}
+              </p>
               <p className="mt-1 text-xs text-[#5C5E58]">
-                Click garments on the left to layer tops, bottoms, outerwear, and footwear.
+                {t(
+                  'builder.canvasEmptyDesc',
+                  'Click garments on the left to layer tops, bottoms, outerwear, and footwear.'
+                )}
               </p>
             </div>
           )}
@@ -461,43 +515,47 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
           <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
             <div>
               <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                Outfit Title
+                {t('builder.outfitTitle', 'Outfit Title')}
               </label>
               <input
                 type="text"
                 value={outfitName}
                 onChange={(e) => setOutfitName(e.target.value)}
-                placeholder="e.g., Autumn Architecture Critique"
+                placeholder={t('builder.outfitTitlePlaceholder', 'e.g., Autumn Architecture Critique')}
                 className="w-full px-3 py-2 text-sm bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg focus:outline-none focus:border-[#526B56]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Occasion</label>
+                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                  {t('builder.occasion', 'Occasion')}
+                </label>
                 <select
                   value={occasion}
                   onChange={(e) => setOccasion(e.target.value as OccasionTag)}
-                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg"
+                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg cursor-pointer"
                 >
                   {OCCASIONS.map((occ) => (
                     <option key={occ} value={occ}>
-                      {occ}
+                      {getOccasionLabel(occ)}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Season</label>
+                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                  {t('builder.season', 'Season')}
+                </label>
                 <select
                   value={season}
                   onChange={(e) => setSeason(e.target.value as SeasonTag)}
-                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg"
+                  className="w-full px-3 py-2 text-xs bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg cursor-pointer"
                 >
                   {SEASONS.map((s) => (
                     <option key={s} value={s}>
-                      {s}
+                      {t(`seasons.${s.toLowerCase().replace(' ', '')}`, s)}
                     </option>
                   ))}
                 </select>
@@ -506,13 +564,13 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
 
             <div>
               <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                Styling Notes
+                {t('builder.stylingNotes', 'Styling Notes')}
               </label>
               <input
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Optional cuff or accessory reminder..."
+                placeholder={t('builder.stylingPlaceholder', 'Optional cuff or accessory reminder...')}
                 className="w-full px-3 py-2 text-sm bg-[#FAF8F5] border border-[#D8D3C8] rounded-lg"
               />
             </div>
@@ -524,7 +582,7 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                 onChange={(e) => setIsFavorite(e.target.checked)}
                 className="accent-[#526B56]"
               />
-              <span>Add immediately to Favorite Outfits</span>
+              <span>{t('builder.favoriteCheckbox', 'Add immediately to Favorite Outfits')}</span>
             </label>
 
             <div className="flex items-center gap-2">
@@ -532,9 +590,9 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                 <button
                   type="button"
                   onClick={onCancelEdit}
-                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors text-center"
+                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors text-center cursor-pointer"
                 >
-                  Cancel
+                  {t('builder.cancelEdit', 'Cancel')}
                 </button>
               )}
               <button
@@ -542,15 +600,15 @@ export const OutfitBuilderView: React.FC<OutfitBuilderViewProps> = ({
                 disabled={selectedItems.length === 0 || saving}
                 className={`${
                   editingOutfit ? 'flex-2' : 'w-full'
-                } py-2.5 px-4 rounded-lg text-sm font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-45 transition-colors`}
+                } py-2.5 px-4 rounded-lg text-sm font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-45 transition-colors cursor-pointer`}
               >
                 {saving
                   ? editingOutfit
-                    ? 'Updating Look...'
-                    : 'Saving Outfit...'
+                    ? t('builder.updatingLook', 'Updating Look...')
+                    : t('builder.savingOutfit', 'Saving Outfit...')
                   : editingOutfit
-                  ? 'Update Look'
-                  : 'Save Outfit to Lookbook'}
+                  ? t('builder.updateLook', 'Update Look')
+                  : t('builder.saveOutfit', 'Save Outfit to Lookbook')}
               </button>
             </div>
           </div>

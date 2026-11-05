@@ -9,6 +9,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import type { TourStep } from '../../types/tour';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface DemoTourControlsProps {
   currentStep: TourStep;
@@ -37,6 +38,8 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
   onRestart,
   onGoToStep,
 }) => {
+  const { t } = useLanguage();
+
   // Keyboard-friendly interactions: Left/Right arrows and Esc
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,6 +73,11 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
   const stepNumber = currentStepIndex + 1;
   const progressPercent = ((currentStepIndex + 1) / totalSteps) * 100;
 
+  // Localized title, badge, description
+  const localizedBadge = t(`tour.stepBadge${stepNumber}`, currentStep.badge);
+  const localizedTitle = t(`tour.stepTitle${stepNumber}`, currentStep.title);
+  const localizedDesc = t(`tour.stepDesc${stepNumber}`, currentStep.description);
+
   return (
     <aside
       role="region"
@@ -82,10 +90,12 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD] shrink-0">
               <Sparkles className="w-2.5 h-2.5 text-[#526B56]" />
-              <span className="truncate max-w-[120px]">{currentStep.badge}</span>
+              <span className="truncate max-w-[120px]">{localizedBadge}</span>
             </span>
             <span className="font-mono text-[11px] text-[#73766E] whitespace-nowrap">
-              Step <span className="font-semibold text-[#1C1D1A]">{stepNumber}</span> of {totalSteps}
+              {t('tour.stepCounter', 'Step')}{' '}
+              <span className="font-semibold text-[#1C1D1A]">{stepNumber}</span>{' '}
+              {t('tour.stepOf', 'of')} {totalSteps}
             </span>
           </div>
 
@@ -95,8 +105,8 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
                 type="button"
                 onClick={onRestart}
                 className="p-1 rounded text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
-                title="Restart Tour from Step 1"
-                aria-label="Restart Tour from Step 1"
+                title={t('tour.restartTour', 'Restart Tour from Step 1')}
+                aria-label={t('tour.restartTour', 'Restart Tour from Step 1')}
               >
                 <RotateCcw className="w-3 h-3" />
               </button>
@@ -105,9 +115,9 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
               type="button"
               onClick={onSkip}
               className="text-[11px] font-medium text-[#73766E] hover:text-[#1C1D1A] px-1.5 py-0.5 rounded hover:bg-[#F2EFE9] transition-colors cursor-pointer whitespace-nowrap"
-              aria-label="Skip guided product tour"
+              aria-label={t('tour.skipTour', 'Skip guided product tour')}
             >
-              Skip Tour
+              {t('tour.skipTour', 'Skip Tour')}
             </button>
           </div>
         </div>
@@ -129,10 +139,10 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 py-0.5">
           <div className="min-w-0 flex-1 pr-1">
             <h3 className="font-editorial text-base sm:text-[17px] font-semibold tracking-tight text-[#1C1D1A] leading-tight truncate">
-              {currentStep.title}
+              {localizedTitle}
             </h3>
             <p className="text-[11px] text-[#5C5E58] mt-0.5 line-clamp-2 leading-relaxed">
-              {currentStep.description}
+              {localizedDesc}
             </p>
           </div>
 
@@ -151,7 +161,7 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
               aria-label="Previous tour step"
             >
               <ChevronLeft className="w-3 h-3" />
-              <span>Prev</span>
+              <span>{t('common.prev', 'Prev')}</span>
             </button>
 
             {/* Next or Finish Button */}
@@ -163,7 +173,7 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
                 aria-label="Finish guided tour"
               >
                 <Check className="w-3 h-3" />
-                <span>Finish</span>
+                <span>{t('tour.finishTour', 'Finish')}</span>
               </button>
             ) : (
               <button
@@ -172,7 +182,7 @@ export const DemoTourControls: React.FC<DemoTourControlsProps> = ({
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs whitespace-nowrap"
                 aria-label="Next tour step"
               >
-                <span>Next</span>
+                <span>{t('common.next', 'Next')}</span>
                 <ChevronRight className="w-3 h-3" />
               </button>
             )}

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
-  BookOpen,
   Calendar,
   Compass,
   Heart,
+  HelpCircle,
   History,
   Layers,
   LayoutDashboard,
@@ -34,7 +34,7 @@ import { CalendarView } from './components/modules/CalendarView';
 import { WearHistoryView } from './components/modules/WearHistoryView';
 import { SuggestionsView } from './components/modules/SuggestionsView';
 import { StatisticsView } from './components/modules/StatisticsView';
-import { BlueprintView } from './components/modules/BlueprintView';
+import { HelpCenterView } from './components/modules/HelpCenterView';
 
 import {
   DEMO_USER_PROFILE,
@@ -47,6 +47,9 @@ import { useDemoTour } from './hooks/useDemoTour';
 import { DEMO_TOUR_STEPS } from './types/tour';
 import { DemoWelcomeModal } from './components/demo/DemoWelcomeModal';
 import { DemoTourControls } from './components/demo/DemoTourControls';
+import { ThemeSelector } from './components/common/ThemeSelector';
+import { LanguageSelector } from './components/common/LanguageSelector';
+import { useLanguage } from './context/LanguageContext';
 
 interface NavItemConfig {
   id: AppSection;
@@ -64,10 +67,11 @@ const PRIMARY_NAV: NavItemConfig[] = [
   { id: 'history', label: 'Wear History', icon: History },
   { id: 'suggestions', label: 'Suggestions', icon: Sparkles },
   { id: 'statistics', label: 'Statistics', icon: BarChart3 },
-  { id: 'blueprint', label: 'System Blueprint', icon: BookOpen },
+  { id: 'help', label: 'Help Center', icon: HelpCircle },
 ];
 
 export default function App() {
+  const { t } = useLanguage();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [bootstrapping, setBootstrapping] = useState(true);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register' | null>(null);
@@ -239,7 +243,12 @@ export default function App() {
   // --- MUTATION HANDLERS (PROTECTED IN DEMO MODE) ---
   const handleCreateGarment = async (payload: Partial<ClothingItem>) => {
     if (isDemoMode) {
-      setDemoNotice('Adding new garments is disabled in read-only Demo Mode. Sign up to catalog your physical wardrobe.');
+      setDemoNotice(
+        t(
+          'demo.addGarmentDisabled',
+          'Adding new garments is disabled in read-only Demo Mode. Sign up to catalog your physical wardrobe.'
+        )
+      );
       return;
     }
     const { item } = await outdrobeApi.createGarment(payload);
@@ -248,7 +257,12 @@ export default function App() {
 
   const handleUpdateGarment = async (id: string, payload: Partial<ClothingItem>) => {
     if (isDemoMode) {
-      setDemoNotice('Editing garments is disabled in read-only Demo Mode. Sign up to customize your own pieces.');
+      setDemoNotice(
+        t(
+          'demo.editGarmentDisabled',
+          'Editing garments is disabled in read-only Demo Mode. Sign up to customize your own pieces.'
+        )
+      );
       return;
     }
     const { item } = await outdrobeApi.updateGarment(id, payload);
@@ -257,7 +271,7 @@ export default function App() {
 
   const handleDeleteGarment = async (item: ClothingItem) => {
     if (isDemoMode) {
-      setDemoNotice('Deleting garments is disabled in read-only Demo Mode.');
+      setDemoNotice(t('demo.deleteGarmentDisabled', 'Deleting garments is disabled in read-only Demo Mode.'));
       return;
     }
     await outdrobeApi.deleteGarment(item.id);
@@ -272,7 +286,12 @@ export default function App() {
 
   const handleCreateOutfit = async (payload: Partial<Outfit>) => {
     if (isDemoMode) {
-      setDemoNotice('Saving custom outfits is disabled in read-only Demo Mode. Sign up to save looks to your personal Lookbook.');
+      setDemoNotice(
+        t(
+          'demo.createOutfitDisabled',
+          'Saving custom outfits is disabled in read-only Demo Mode. Sign up to save looks to your personal Lookbook.'
+        )
+      );
       return;
     }
     const { outfit } = await outdrobeApi.createOutfit(payload);
@@ -286,7 +305,12 @@ export default function App() {
 
   const handleUpdateOutfit = async (id: string, payload: Partial<Outfit>) => {
     if (isDemoMode) {
-      setDemoNotice('Updating outfits is disabled in read-only Demo Mode. Sign up to create and edit your own ensembles.');
+      setDemoNotice(
+        t(
+          'demo.updateOutfitDisabled',
+          'Updating outfits is disabled in read-only Demo Mode. Sign up to create and edit your own ensembles.'
+        )
+      );
       return;
     }
     const { outfit: updated } = await outdrobeApi.updateOutfit(id, payload);
@@ -296,6 +320,10 @@ export default function App() {
   };
 
   const handleNavigate = (section: AppSection) => {
+    if (section === 'blueprint') {
+      setActiveSection('dashboard');
+      return;
+    }
     if (section === 'builder') {
       setEditingOutfit(null);
     }
@@ -315,7 +343,7 @@ export default function App() {
 
   const handleToggleOutfitFavorite = async (outfit: Outfit) => {
     if (isDemoMode) {
-      setDemoNotice('Favoriting outfits is disabled in read-only Demo Mode.');
+      setDemoNotice(t('demo.favoriteOutfitDisabled', 'Favoriting outfits is disabled in read-only Demo Mode.'));
       return;
     }
     const { outfit: updated } = await outdrobeApi.updateOutfit(outfit.id, {
@@ -326,7 +354,7 @@ export default function App() {
 
   const handleDeleteOutfit = async (outfit: Outfit) => {
     if (isDemoMode) {
-      setDemoNotice('Deleting outfits is disabled in read-only Demo Mode.');
+      setDemoNotice(t('demo.deleteOutfitDisabled', 'Deleting outfits is disabled in read-only Demo Mode.'));
       return;
     }
     await outdrobeApi.deleteOutfit(outfit.id);
@@ -339,7 +367,12 @@ export default function App() {
 
   const handleScheduleOutfit = async (date: string, outfitId: string, occasionNote: string) => {
     if (isDemoMode) {
-      setDemoNotice('Calendar scheduling is disabled in read-only Demo Mode. Sign up to plan your daily outfits.');
+      setDemoNotice(
+        t(
+          'demo.scheduleDisabled',
+          'Calendar scheduling is disabled in read-only Demo Mode. Sign up to plan your daily outfits.'
+        )
+      );
       return;
     }
     const { plan } = await outdrobeApi.scheduleOutfit({ date, outfitId, occasionNote });
@@ -356,7 +389,7 @@ export default function App() {
 
   const handleRemoveCalendarPlan = async (id: string) => {
     if (isDemoMode) {
-      setDemoNotice('Removing calendar plans is disabled in read-only Demo Mode.');
+      setDemoNotice(t('demo.removePlanDisabled', 'Removing calendar plans is disabled in read-only Demo Mode.'));
       return;
     }
     await outdrobeApi.removeCalendarPlan(id);
@@ -372,7 +405,12 @@ export default function App() {
     calendarPlanId?: string;
   }) => {
     if (isDemoMode) {
-      setDemoNotice('Wear logging is disabled in read-only Demo Mode. Sign up to track your own cost-per-wear.');
+      setDemoNotice(
+        t(
+          'demo.wearLogDisabled',
+          'Wear logging is disabled in read-only Demo Mode. Sign up to track your own cost-per-wear.'
+        )
+      );
       return;
     }
     const res = await outdrobeApi.logWear(payload);
@@ -410,7 +448,7 @@ export default function App() {
   if (bootstrapping) {
     return (
       <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
-        <p className="font-editorial text-2xl text-[#5C5E58]">Opening OutDrobe...</p>
+        <p className="font-editorial text-2xl text-[#5C5E58]">{t('common.loading', 'Opening OutDrobe...')}</p>
       </div>
     );
   }
@@ -451,23 +489,23 @@ export default function App() {
       {isDemoMode && (
         <aside
           role="region"
-          aria-label="Demo Mode Notice"
+          aria-label={t('common.demoMode', 'Demo Mode Notice')}
           className="bg-[#1C1D1A] text-white px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs border-b border-[#31332E] z-40 sticky top-0"
         >
           <div className="flex items-center gap-2.5">
             <span className="px-2 py-0.5 rounded font-mono uppercase tracking-wider text-[10px] font-semibold bg-[#526B56] text-white">
-              Demo Mode
+              {t('common.demoMode', 'Demo Mode')}
             </span>
             {tour.isTourActive ? (
               <span className="text-[#D8D5CD] flex items-center gap-1.5 flex-wrap">
-                <span className="text-[#88A88E] font-medium">Guided Tour:</span>
+                <span className="text-[#88A88E] font-medium">{t('tour.startTourBtn', 'Guided Tour')}:</span>
                 <span className="font-semibold text-white">
-                  Step {tour.currentStepIndex + 1} of {tour.totalSteps} — {tour.currentStep.title}
+                  {t('tour.stepCounter', 'Step')} {tour.currentStepIndex + 1} {t('tour.stepOf', 'of')} {tour.totalSteps} — {tour.currentStep.title}
                 </span>
               </span>
             ) : (
               <span className="text-[#D8D5CD]">
-                Exploring pre-populated demo wardrobe · Read-only preview
+                {t('demo.bannerNotice', 'Exploring pre-populated demo wardrobe · Read-only preview')}
               </span>
             )}
           </div>
@@ -479,7 +517,7 @@ export default function App() {
                 className="px-2.5 py-1 rounded bg-[#31332E] hover:bg-[#454741] text-[#E5E0D8] transition-colors font-medium cursor-pointer inline-flex items-center gap-1 text-[11px]"
               >
                 <Sparkles className="w-3 h-3 text-[#7A8F7C]" />
-                <span>{tour.hasCompleted ? 'Restart Tour' : 'Start Guided Tour'}</span>
+                <span>{tour.hasCompleted ? t('tour.restartTour', 'Restart Tour') : t('tour.startTourBtn', 'Start Guided Tour')}</span>
               </button>
             )}
             <button
@@ -487,14 +525,14 @@ export default function App() {
               onClick={() => setAuthModalMode('register')}
               className="font-medium text-[#FAF8F5] underline hover:text-[#88A88E] transition-colors cursor-pointer"
             >
-              Create Your Own Wardrobe →
+              {t('common.createAccount', 'Create Your Own Wardrobe →')}
             </button>
             <button
               type="button"
               onClick={handleExitDemo}
               className="px-3 py-1 rounded bg-[#31332E] hover:bg-[#454741] text-[#E5E0D8] transition-colors font-medium cursor-pointer"
             >
-              Exit Demo
+              {t('common.exitDemo', 'Exit Demo')}
             </button>
           </div>
         </aside>
@@ -529,7 +567,7 @@ export default function App() {
                   }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-[#526B56]' : 'text-[#73766E]'}`} />
-                  <span>{item.label}</span>
+                  <span>{t(`nav.${item.id}`, item.label)}</span>
                 </button>
               );
             })}
@@ -552,9 +590,9 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setAuthModalMode('register')}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer"
                 >
-                  Sign Up / Create Account
+                  {t('common.createAccount', 'Sign Up / Create Account')}
                 </button>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -564,7 +602,7 @@ export default function App() {
                     title="Start or restart guided product tour"
                   >
                     <Sparkles className="w-3 h-3 text-[#526B56]" />
-                    <span>{tour.isTourActive ? 'Restart' : 'Guided Tour'}</span>
+                    <span>{tour.isTourActive ? t('common.restart', 'Restart') : t('tour.startTourBtn', 'Guided Tour')}</span>
                   </button>
                   <button
                     type="button"
@@ -572,7 +610,7 @@ export default function App() {
                     className="flex-1 flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-white border border-[#D8D3C8] text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
                   >
                     <LogOut className="w-3 h-3" />
-                    <span>Exit Demo</span>
+                    <span>{t('common.exitDemo', 'Exit Demo')}</span>
                   </button>
                 </div>
               </div>
@@ -580,10 +618,10 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-white transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-white transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                Sign Out
+                {t('common.signOut', 'Sign Out')}
               </button>
             )}
           </div>
@@ -627,12 +665,16 @@ export default function App() {
                       }`}
                     >
                       <Icon className={`w-4 h-4 ${active ? 'text-[#526B56]' : 'text-[#73766E]'}`} />
-                      <span>{item.label}</span>
+                      <span>{t(`nav.${item.id}`, item.label)}</span>
                     </button>
                   );
                 })}
               </nav>
               <div className="p-4 border-t border-[#E5E0D8] space-y-2">
+                <div className="flex items-center gap-2 pt-1 pb-2 border-b border-[#E5E0D8]">
+                  <LanguageSelector className="flex-1" />
+                  <ThemeSelector className="flex-1" />
+                </div>
                 {isDemoMode ? (
                   <>
                     <button
@@ -641,9 +683,9 @@ export default function App() {
                         setAuthModalMode('register');
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947]"
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] cursor-pointer"
                     >
-                      Sign Up / Create Account
+                      {t('common.createAccount', 'Sign Up / Create Account')}
                     </button>
                     <div className="flex items-center gap-2">
                       <button
@@ -652,10 +694,10 @@ export default function App() {
                           tour.restartTour();
                           setMobileMenuOpen(false);
                         }}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9]"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-[#526B56]" />
-                        <span>Guided Tour</span>
+                        <span>{t('tour.startTourBtn', 'Guided Tour')}</span>
                       </button>
                       <button
                         type="button"
@@ -663,10 +705,10 @@ export default function App() {
                           handleExitDemo();
                           setMobileMenuOpen(false);
                         }}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#5C5E58] hover:bg-[#F2EFE9]"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#5C5E58] hover:bg-[#F2EFE9] cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
-                        <span>Exit Demo</span>
+                        <span>{t('common.exitDemo', 'Exit Demo')}</span>
                       </button>
                     </div>
                   </>
@@ -674,10 +716,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5C5E58] hover:bg-white"
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5C5E58] hover:bg-white cursor-pointer"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    Sign Out
+                    {t('common.signOut', 'Sign Out')}
                   </button>
                 )}
               </div>
@@ -688,13 +730,13 @@ export default function App() {
         {/* Main Content Area */}
         <div className="flex-1 lg:pl-64 flex flex-col min-w-0">
           {/* Contextual Workspace Header */}
-          <header className="sticky top-0 z-20 bg-[#FAF8F5]/95 backdrop-blur-xs border-b border-[#E5E0D8] px-6 py-3.5 flex items-center justify-between gap-4">
+          <header className="sticky top-0 z-20 bg-[#FAF8F5]/95 backdrop-blur-xs border-b border-[#E5E0D8] px-4 sm:px-6 py-3 flex items-center justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open navigation menu"
-                className="lg:hidden p-2 -ml-2 rounded-lg text-[#1C1D1A] hover:bg-[#F2EFE9]"
+                className="lg:hidden p-2 -ml-2 rounded-lg text-[#1C1D1A] hover:bg-[#F2EFE9] cursor-pointer"
               >
                 <Menu className="w-5 h-5" />
               </button>
@@ -703,32 +745,36 @@ export default function App() {
                 <span className="hidden sm:inline" aria-hidden="true">
                   /
                 </span>
-                <span className="font-medium text-[#1C1D1A] truncate">{activeNavConfig.label}</span>
+                <span className="font-medium text-[#1C1D1A] truncate">
+                  {t(`nav.${activeNavConfig.id}`, activeNavConfig.label)}
+                </span>
                 {isDemoMode && (
                   <span className="ml-2 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD]">
-                    Read-Only Demo
+                    {t('common.readOnlyDemo', 'Read-Only Demo')}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <LanguageSelector />
+              <ThemeSelector />
               {isDemoMode && (
                 <button
                   type="button"
                   onClick={() => setAuthModalMode('register')}
-                  className="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+                  className="hidden md:inline-flex px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-2xs"
                 >
-                  Sign Up / Create Account
+                  {t('common.createAccount', 'Sign Up')}
                 </button>
               )}
               {activeSection !== 'builder' && (
                 <button
                   type="button"
                   onClick={() => handleNavigate('builder')}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+                  className="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-2xs"
                 >
-                  Outfit Builder
+                  {t('nav.builder', 'Outfit Builder')}
                 </button>
               )}
             </div>
@@ -835,7 +881,13 @@ export default function App() {
               />
             )}
 
-            {activeSection === 'blueprint' && <BlueprintView />}
+            {activeSection === 'help' && (
+              <HelpCenterView
+                onNavigate={handleNavigate}
+                onStartTour={tour.restartTour}
+                isDemoMode={isDemoMode}
+              />
+            )}
           </main>
         </div>
       </div>
@@ -844,7 +896,7 @@ export default function App() {
       {demoNotice && (
         <div className="fixed bottom-6 right-6 z-50 max-w-md p-4 rounded-xl bg-[#1C1D1A] text-white shadow-xl border border-[#31332E] flex items-start justify-between gap-3 text-xs animate-in fade-in slide-in-from-bottom-2">
           <div>
-            <p className="font-semibold text-[#E5E0D8] mb-0.5">Demo Mode</p>
+            <p className="font-semibold text-[#E5E0D8] mb-0.5">{t('common.demoMode', 'Demo Mode')}</p>
             <p className="text-[#A3A69D] leading-relaxed">{demoNotice}</p>
             <button
               type="button"
@@ -854,14 +906,14 @@ export default function App() {
               }}
               className="mt-2.5 inline-block text-xs font-medium text-[#88A88E] hover:underline cursor-pointer"
             >
-              Create a free account to customize your wardrobe →
+              {t('demo.createFreeAccount', 'Create a free account to customize your wardrobe →')}
             </button>
           </div>
           <button
             type="button"
             onClick={() => setDemoNotice(null)}
             className="p-1 rounded text-[#73766E] hover:text-white cursor-pointer"
-            aria-label="Dismiss notice"
+            aria-label={t('demo.dismissNotice', 'Dismiss notice')}
           >
             <X className="w-4 h-4" />
           </button>

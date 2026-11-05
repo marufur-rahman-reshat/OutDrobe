@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface GuidancePoint {
   label: string;
@@ -28,13 +29,16 @@ export const TourSpotlightCallout: React.FC<TourSpotlightCalloutProps> = ({
   guidancePoints,
   interactiveTip,
   onNext,
-  nextLabel = 'Next Step',
+  nextLabel,
   className = '',
 }) => {
+  const { t } = useLanguage();
+  const resolvedNextLabel = nextLabel || t('tourSpotlight.nextStep', 'Next Step');
+
   return (
     <div
       role="region"
-      aria-label={`Tour Guide: ${stepTitle}`}
+      aria-label={`${t('tourSpotlight.tourGuide', 'Tour Guide')}: ${stepTitle}`}
       className={`bg-white border-2 border-[#526B56] rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300 relative overflow-hidden ${className}`}
     >
       {/* Decorative top accent line */}
@@ -46,7 +50,7 @@ export const TourSpotlightCallout: React.FC<TourSpotlightCalloutProps> = ({
           <div className="flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#526B56] animate-pulse" />
-              Tour Step {stepNumber} · {stepBadge}
+              {t('tourSpotlight.tourStep', 'Tour Step')} {stepNumber} · {stepBadge}
             </span>
             <span className="text-xs text-[#73766E] font-medium">{stepTitle}</span>
           </div>
@@ -83,7 +87,9 @@ export const TourSpotlightCallout: React.FC<TourSpotlightCalloutProps> = ({
           {interactiveTip && (
             <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-[#F2EFE9] border border-[#D8D3C8] text-xs text-[#1C1D1A]">
               <Sparkles className="w-3.5 h-3.5 text-[#526B56] shrink-0" />
-              <span className="font-medium text-[#526B56]">Interactive Exploration:</span>
+              <span className="font-medium text-[#526B56]">
+                {t('tourSpotlight.interactiveTipTitle', 'Interactive Exploration:')}
+              </span>
               <span className="text-[#5C5E58]">{interactiveTip}</span>
             </div>
           )}
@@ -97,7 +103,7 @@ export const TourSpotlightCallout: React.FC<TourSpotlightCalloutProps> = ({
               onClick={onNext}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs whitespace-nowrap"
             >
-              <span>{nextLabel}</span>
+              <span>{resolvedNextLabel}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { ARCHITECTURE_BLUEPRINT } from '../../data/architectureSpec';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface BlueprintViewProps {
   isPublicPreview?: boolean;
@@ -11,6 +12,7 @@ export const BlueprintView: React.FC<BlueprintViewProps> = ({
   isPublicPreview = false,
   onBack,
 }) => {
+  const { t } = useLanguage();
   const [activeId, setActiveId] = useState<string>('all');
 
   const visibleSections =
@@ -24,24 +26,28 @@ export const BlueprintView: React.FC<BlueprintViewProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5C5E58] hover:text-[#1C1D1A]"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5C5E58] hover:text-[#1C1D1A] cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Back to OutDrobe Home
+          {t('blueprint.backToHome', 'Back to OutDrobe Home')}
         </button>
       )}
 
       <div className="pb-6 border-b border-[#E5E0D8]">
         <p className="text-xs font-medium text-[#526B56] mb-1">
-          Full-Stack Software Architecture & Beginner Engineering Guide
+          {t(
+            'blueprint.blueprintEyebrow',
+            'Full-Stack Software Architecture & Beginner Engineering Guide'
+          )}
         </p>
         <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-          OutDrobe System Blueprint (Tasks 01–10)
+          {t('blueprint.blueprintTitle', 'OutDrobe System Blueprint (Tasks 01–10)')}
         </h1>
         <p className="mt-2 text-sm text-[#5C5E58] max-w-3xl leading-relaxed">
-          Complete technical specification covering requirements analysis, React + Node.js +
-          Firebase architecture, scalable folder organization, Cloud Firestore schemas, security
-          rules, development milestones, and verification plans.
+          {t(
+            'blueprint.blueprintSubtitle',
+            'Complete technical specification covering requirements analysis, React + Node.js + Firebase architecture, scalable folder organization, Cloud Firestore schemas, security rules, development milestones, and verification plans.'
+          )}
         </p>
       </div>
 
@@ -50,20 +56,20 @@ export const BlueprintView: React.FC<BlueprintViewProps> = ({
         <button
           type="button"
           onClick={() => setActiveId('all')}
-          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
             activeId === 'all'
               ? 'bg-white text-[#1C1D1A] shadow-xs'
               : 'text-[#5C5E58] hover:text-[#1C1D1A]'
           }`}
         >
-          All 10 Sections
+          {t('blueprint.allSections', 'All 10 Sections')}
         </button>
         {ARCHITECTURE_BLUEPRINT.map((sec) => (
           <button
             key={sec.id}
             type="button"
             onClick={() => setActiveId(sec.id)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
               activeId === sec.id
                 ? 'bg-white text-[#1C1D1A] shadow-xs'
                 : 'text-[#5C5E58] hover:text-[#1C1D1A]'
@@ -83,7 +89,7 @@ export const BlueprintView: React.FC<BlueprintViewProps> = ({
           >
             <div>
               <p className="font-mono-tabular text-xs font-medium text-[#526B56]">
-                Section {section.number}
+                {t('blueprint.sectionPrefix', 'Section')} {section.number}
               </p>
               <h2 className="font-editorial text-2xl sm:text-3xl font-medium text-[#1C1D1A] mt-0.5">
                 {section.number}. {section.title}

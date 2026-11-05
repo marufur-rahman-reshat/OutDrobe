@@ -5,6 +5,7 @@ import { COLOR_SWATCH_OPTIONS, GARMENT_PRESET_ASSETS } from '../../data/garmentA
 import { ClothingCard } from '../common/ClothingCard';
 import { GarmentImage } from '../common/GarmentImage';
 import { TourSpotlightCallout } from '../demo/TourSpotlightCallout';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface WardrobeViewProps {
   wardrobe: ClothingItem[];
@@ -79,6 +80,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
   isTourActive = false,
   onNextTourStep,
 }) => {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<'All' | ClothingCategory>('All');
   const [selectedSeason, setSelectedSeason] = useState<'All' | SeasonTag>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -165,11 +167,11 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
     if (!file) return;
     setUploadError(null);
     if (!file.type.startsWith('image/')) {
-      setUploadError('Please select a JPEG, PNG, or WebP clothing image.');
+      setUploadError(t('wardrobe.invalidImage', 'Please select a JPEG, PNG, or WebP clothing image.'));
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
-      setUploadError('Please choose an image smaller than 8 MB.');
+      setUploadError(t('wardrobe.imageTooLarge', 'Please choose an image smaller than 8 MB.'));
       return;
     }
     try {
@@ -246,23 +248,28 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
-          <p className="text-xs font-medium text-[#526B56] mb-1">Digital Wardrobe · Clothing Management</p>
+          <p className="text-xs font-medium text-[#526B56] mb-1">
+            {t('wardrobe.management', 'Digital Wardrobe · Clothing Management')}
+          </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            Your Garment Archive
+            {t('wardrobe.archiveTitle', 'Your Garment Archive')}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
-            <span className="font-mono-tabular">{safeWardrobe.length}</span> cataloged pieces organized
-            by silhouette, season, and cost-per-wear.
+            <span className="font-mono-tabular">{safeWardrobe.length}</span>{' '}
+            {t(
+              'wardrobe.catalogedPiecesSubtitle',
+              'cataloged pieces organized by silhouette, season, and cost-per-wear.'
+            )}
           </p>
         </div>
 
         <button
           type="button"
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          Add Garment
+          {t('wardrobe.addNewGarment', 'Add Garment')}
         </button>
       </div>
 
@@ -278,13 +285,13 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-white text-[#1C1D1A] shadow-xs'
                   : 'text-[#5C5E58] hover:text-[#1C1D1A]'
               }`}
             >
-              {cat}
+              {t(`categories.${cat.toLowerCase()}`, cat)}
             </button>
           ))}
         </div>
@@ -294,11 +301,13 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             aria-label="Filter by season"
             value={selectedSeason}
             onChange={(e) => setSelectedSeason(e.target.value as 'All' | SeasonTag)}
-            className="px-3 py-2 text-xs font-medium bg-white border border-[#D8D3C8] rounded-lg text-[#1C1D1A] focus:outline-none focus:border-[#526B56]"
+            className="px-3 py-2 text-xs font-medium bg-white border border-[#D8D3C8] rounded-lg text-[#1C1D1A] focus:outline-none focus:border-[#526B56] cursor-pointer"
           >
             {SEASONS.map((s) => (
               <option key={s} value={s}>
-                {s === 'All' ? 'All Seasons Filter' : s}
+                {s === 'All'
+                  ? t('seasons.allFilter', 'All Seasons Filter')
+                  : t(`seasons.${s.toLowerCase().replace(' ', '')}`, s)}
               </option>
             ))}
           </select>
@@ -309,7 +318,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search name, color, fabric..."
+              placeholder={t('wardrobe.searchPlaceholder', 'Search name, color, fabric...')}
               className="w-full sm:w-60 pl-8 pr-3 py-2 text-xs bg-white border border-[#D8D3C8] rounded-lg text-[#1C1D1A] placeholder:text-[#8A8D84] focus:outline-none focus:border-[#526B56]"
             />
           </div>
@@ -321,9 +330,12 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         <div className="flex items-center justify-between text-xs text-[#73766E] px-1 -mb-3">
           <span className="font-mono uppercase tracking-wider text-[11px] font-semibold text-[#526B56] flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#526B56]" />
-            Highlighted Garment Grid · {filteredItems.length} Pieces Shown
+            {t('wardrobe.highlightedGrid', 'Highlighted Garment Grid')} · {filteredItems.length}{' '}
+            {t('wardrobe.piecesShown', 'Pieces Shown')}
           </span>
-          <span className="hidden sm:inline">Click any garment card to inspect details</span>
+          <span className="hidden sm:inline">
+            {t('wardrobe.clickCardHint', 'Click any garment card to inspect details')}
+          </span>
         </div>
       )}
 
@@ -347,10 +359,13 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
       ) : (
         <div className="bg-white border border-[#E5E0D8] rounded-xl py-16 px-6 text-center">
           <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-            No garments match your current filter
+            {t('wardrobe.noMatchTitle', 'No garments match your current filter')}
           </h2>
           <p className="mt-1.5 text-sm text-[#5C5E58] max-w-md mx-auto">
-            Reset your category or search criteria, or add a new piece to your digital wardrobe.
+            {t(
+              'wardrobe.noMatchDesc',
+              'Reset your category or search criteria, or add a new piece to your digital wardrobe.'
+            )}
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
             <button
@@ -360,16 +375,16 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                 setSelectedSeason('All');
                 setSearchQuery('');
               }}
-              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors"
+              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors cursor-pointer"
             >
-              Reset Filters
+              {t('wardrobe.resetFilters', 'Reset Filters')}
             </button>
             <button
               type="button"
               onClick={openAddModal}
-              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors"
+              className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer"
             >
-              Add Garment
+              {t('wardrobe.addNewGarment', 'Add Garment')}
             </button>
           </div>
         </div>
@@ -387,26 +402,34 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              aria-label="Close garment form"
-              className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9]"
+              aria-label={t('wardrobe.closeForm', 'Close garment form')}
+              className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
 
             <p className="text-xs font-medium text-[#526B56] mb-1">
-              {editingItem ? 'Update Garment Record' : 'New Closet Addition'}
+              {editingItem
+                ? t('wardrobe.updateRecord', 'Update Garment Record')
+                : t('wardrobe.newAddition', 'New Closet Addition')}
             </p>
             <h2 id="garment-modal-title" className="font-editorial text-3xl font-medium text-[#1C1D1A]">
-              {editingItem ? editingItem.name : 'Catalog a Garment'}
+              {editingItem ? editingItem.name : t('wardrobe.catalogGarment', 'Catalog a Garment')}
             </h2>
 
             {isTourActive && editingItem && (
               <div className="mt-3 p-3 rounded-xl bg-[#EBF0EC] border border-[#CBD8CD] text-xs text-[#2D4030] flex items-center gap-2.5">
                 <span className="font-semibold font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-white text-[#354938] border border-[#CBD8CD] shrink-0">
-                  Demo Detail View
+                  {t('wardrobe.demoDetailView', 'Demo Detail View')}
                 </span>
                 <span className="leading-relaxed">
-                  Inspecting {editingItem.brand} · {editingItem.category} in {editingItem.color}. Form fields show fabric, season, and cost-per-wear breakdown.
+                  {t(
+                    'wardrobe.inspectingNotice',
+                    'Inspecting {brand} · {category} in {color}. Form fields show fabric, season, and cost-per-wear breakdown.'
+                  )
+                    .replace('{brand}', editingItem.brand)
+                    .replace('{category}', t(`categories.${editingItem.category.toLowerCase()}`, editingItem.category))
+                    .replace('{color}', editingItem.color)}
                 </span>
               </div>
             )}
@@ -427,7 +450,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                 <div>
                   <label className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg text-xs font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] cursor-pointer transition-colors">
                     <Upload className="w-3.5 h-3.5" />
-                    Upload Photo from Device
+                    {t('wardrobe.uploadPhoto', 'Upload Photo from Device')}
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
@@ -439,9 +462,9 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                     <button
                       type="button"
                       onClick={() => setCustomImageUrl(undefined)}
-                      className="mt-2 w-full text-center text-xs text-[#73766E] hover:text-[#1C1D1A]"
+                      className="mt-2 w-full text-center text-xs text-[#73766E] hover:text-[#1C1D1A] cursor-pointer"
                     >
-                      Revert to Studio Lookbook Preset
+                      {t('wardrobe.revertPreset', 'Revert to Studio Lookbook Preset')}
                     </button>
                   )}
                   {uploadError && (
@@ -451,7 +474,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
                 <div>
                   <label className="block text-xs font-medium text-[#5C5E58] mb-1.5">
-                    Or Choose Studio Silhouette
+                    {t('wardrobe.chooseSilhouette', 'Or Choose Studio Silhouette')}
                   </label>
                   <select
                     value={imageKey}
@@ -459,7 +482,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                       setImageKey(e.target.value);
                       setCustomImageUrl(undefined);
                     }}
-                    className="w-full px-3 py-2 text-xs bg-white border border-[#D8D3C8] rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-white border border-[#D8D3C8] rounded-lg cursor-pointer"
                   >
                     {Object.values(GARMENT_PRESET_ASSETS).map((preset) => (
                       <option key={preset.key} value={preset.key}>
@@ -474,14 +497,14 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
               <div className="md:col-span-7 space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                    Garment Name *
+                    {t('wardrobe.garmentName', 'Garment Name *')}
                   </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g., Relaxed Linen Overshirt"
+                    placeholder={t('wardrobe.garmentNamePlaceholder', 'e.g., Relaxed Linen Overshirt')}
                     className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg focus:outline-none focus:border-[#526B56]"
                   />
                 </div>
@@ -489,16 +512,16 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                      Category *
+                      {t('wardrobe.categoryLabel', 'Category *')}
                     </label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value as ClothingCategory)}
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg cursor-pointer"
                     >
                       {CATEGORIES.filter((c) => c !== 'All').map((cat) => (
                         <option key={cat} value={cat}>
-                          {cat}
+                          {t(`categories.${cat.toLowerCase()}`, cat)}
                         </option>
                       ))}
                     </select>
@@ -506,16 +529,16 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
                   <div>
                     <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                      Season
+                      {t('wardrobe.seasonLabel', 'Season')}
                     </label>
                     <select
                       value={season}
                       onChange={(e) => setSeason(e.target.value as SeasonTag)}
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg cursor-pointer"
                     >
                       {SEASONS.filter((s) => s !== 'All').map((s) => (
                         <option key={s} value={s}>
-                          {s}
+                          {t(`seasons.${s.toLowerCase().replace(' ', '')}`, s)}
                         </option>
                       ))}
                     </select>
@@ -525,20 +548,20 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                      Brand / Maker
+                      {t('wardrobe.brandLabel', 'Brand / Maker')}
                     </label>
                     <input
                       type="text"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
-                      placeholder="Atelier Nord"
+                      placeholder={t('wardrobe.brandPlaceholder', 'Atelier Nord')}
                       className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                      Purchase Price ($)
+                      {t('wardrobe.priceLabel', 'Purchase Price ($)')}
                     </label>
                     <input
                       type="number"
@@ -553,7 +576,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
                 <div>
                   <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">
-                    Color Tone ({color})
+                    {t('wardrobe.colorTone', 'Color Tone')} ({color})
                   </label>
                   <div className="flex items-center gap-2 flex-wrap">
                     {COLOR_SWATCH_OPTIONS.map((swatch) => (
@@ -566,7 +589,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                         }}
                         title={swatch.label}
                         aria-label={`Select color ${swatch.label}`}
-                        className={`w-7 h-7 rounded-full border transition-transform ${
+                        className={`w-7 h-7 rounded-full border transition-transform cursor-pointer ${
                           color === swatch.label
                             ? 'scale-110 ring-2 ring-[#526B56] ring-offset-2 border-black/30'
                             : 'border-black/15 hover:scale-105'
@@ -579,26 +602,29 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
                 <div>
                   <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                    Fabric & Care Notes
+                    {t('wardrobe.fabricCare', 'Fabric & Care Notes')}
                   </label>
                   <input
                     type="text"
                     value={fabric}
                     onChange={(e) => setFabric(e.target.value)}
-                    placeholder="100% Extra-Fine Merino · Hand wash cold"
+                    placeholder={t('wardrobe.fabricPlaceholder', '100% Extra-Fine Merino · Hand wash cold')}
                     className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                    Styling Notes (Optional)
+                    {t('wardrobe.stylingNotes', 'Styling Notes (Optional)')}
                   </label>
                   <textarea
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Pairs cleanly with charcoal wide-leg wool trousers..."
+                    placeholder={t(
+                      'wardrobe.stylingPlaceholder',
+                      'Pairs cleanly with charcoal wide-leg wool trousers...'
+                    )}
                     className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg resize-none"
                   />
                 </div>
@@ -607,16 +633,20 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
-                    className="px-4 py-2.5 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors"
+                    className="px-4 py-2.5 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] hover:bg-[#E6E1D7] transition-colors cursor-pointer"
                   >
-                    Cancel
+                    {t('wardrobe.cancelBtn', 'Cancel')}
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-5 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-50 transition-colors"
+                    className="px-5 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] disabled:opacity-50 transition-colors cursor-pointer"
                   >
-                    {saving ? 'Saving...' : editingItem ? 'Save Changes' : 'Add to Wardrobe'}
+                    {saving
+                      ? t('common.saving', 'Saving...')
+                      : editingItem
+                      ? t('wardrobe.saveChanges', 'Save Changes')
+                      : t('wardrobe.addToWardrobe', 'Add to Wardrobe')}
                   </button>
                 </div>
               </div>

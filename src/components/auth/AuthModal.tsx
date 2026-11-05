@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import type { UserProfile } from '../../types/outdrobe';
 import { outdrobeApi } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface AuthModalProps {
   initialMode?: 'login' | 'register';
@@ -14,6 +15,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onAuthenticated,
 }) => {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +37,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onAuthenticated(res.user);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to authenticate.');
+      setError(err instanceof Error ? err.message : t('auth.authError', 'Unable to authenticate.'));
     } finally {
       setSubmitting(false);
     }
@@ -52,18 +54,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close sign in dialog"
-          className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors"
+          aria-label={t('auth.closeDialog', 'Close sign in dialog')}
+          className="absolute top-5 right-5 w-10 h-10 rounded-lg flex items-center justify-center text-[#5C5E58] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <p className="text-xs text-[#526B56] font-medium mb-1">Personal Closet Access</p>
+        <p className="text-xs text-[#526B56] font-medium mb-1">
+          {t('auth.closetAccess', 'Personal Closet Access')}
+        </p>
         <h2 id="auth-modal-heading" className="text-3xl font-medium text-[#1C1D1A] tracking-tight">
-          {mode === 'login' ? 'Sign in to OutDrobe' : 'Create your wardrobe'}
+          {mode === 'login'
+            ? t('auth.signInTitle', 'Sign in to OutDrobe')
+            : t('auth.registerTitle', 'Create your wardrobe')}
         </h2>
         <p className="mt-1.5 text-sm text-[#5C5E58]">
-          Every garment, outfit, and calendar plan is isolated to your private account.
+          {t(
+            'auth.subtitle',
+            'Every garment, outfit, and calendar plan is isolated to your private account.'
+          )}
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-1 p-1 bg-[#EFECE6] rounded-lg">
@@ -73,11 +82,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               setMode('login');
               setError(null);
             }}
-            className={`py-2 px-3 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+            className={`py-2 px-3 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
               mode === 'login' ? 'bg-white text-[#1C1D1A] shadow-xs' : 'text-[#5C5E58] hover:text-[#1C1D1A]'
             }`}
           >
-            Sign In
+            {t('auth.signInBtn', 'Sign In')}
           </button>
           <button
             type="button"
@@ -85,13 +94,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               setMode('register');
               setError(null);
             }}
-            className={`py-2 px-3 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+            className={`py-2 px-3 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
               mode === 'register'
                 ? 'bg-white text-[#1C1D1A] shadow-xs'
                 : 'text-[#5C5E58] hover:text-[#1C1D1A]'
             }`}
           >
-            Create Account
+            {t('auth.createAccountBtn', 'Create Account')}
           </button>
         </div>
 
@@ -104,39 +113,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           {mode === 'register' && (
             <div>
-              <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">Full Name</label>
+              <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">
+                {t('auth.fullName', 'Full Name')}
+              </label>
               <input
                 type="text"
                 required
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Claire Vance"
+                placeholder={t('auth.fullNamePlaceholder', 'Claire Vance')}
                 className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#D8D3C8] rounded-lg focus:outline-none focus:border-[#526B56]"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">Email Address</label>
+            <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">
+              {t('auth.email', 'Email Address')}
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="claire.vance@outdrobe.studio"
+              placeholder={t('auth.emailPlaceholder', 'claire.vance@outdrobe.studio')}
               className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#D8D3C8] rounded-lg focus:outline-none focus:border-[#526B56]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">Password</label>
+            <label className="block text-xs font-medium text-[#1C1D1A] mb-1.5">
+              {t('auth.password', 'Password')}
+            </label>
             <input
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder={t('auth.passwordPlaceholder', 'At least 6 characters')}
               className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#D8D3C8] rounded-lg focus:outline-none focus:border-[#526B56]"
             />
           </div>
@@ -149,20 +164,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 onChange={(e) => setStartWithCapsule(e.target.checked)}
                 className="mt-0.5 accent-[#526B56]"
               />
-              <span>Pre-load a 9-piece minimalist sample capsule so I can test the Outfit Builder right away</span>
+              <span>
+                {t(
+                  'auth.sampleCapsule',
+                  'Pre-load a 9-piece minimalist sample capsule so I can test the Outfit Builder right away'
+                )}
+              </span>
             </label>
           )}
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] disabled:opacity-50 transition-colors"
+            className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-[#1C1D1A] text-white hover:bg-[#31332E] disabled:opacity-50 transition-colors cursor-pointer"
           >
             {submitting
-              ? 'Opening Wardrobe...'
+              ? t('auth.openingWardrobe', 'Opening Wardrobe...')
               : mode === 'login'
-              ? 'Sign In'
-              : 'Create Account'}
+              ? t('auth.signInBtn', 'Sign In')
+              : t('auth.createAccountBtn', 'Create Account')}
           </button>
         </form>
       </div>

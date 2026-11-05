@@ -1,1 +1,153 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --bg-app: #FAF8F5;
+    --bg-surface: #FFFFFF;
+    --bg-muted: #F2EFE9;
+    --text-main: #1C1D1A;
+    --text-muted: #5C5E58;
+    --text-subtle: #73766E;
+    --border-color: #E5E0D8;
+    --border-subtle: #EFECE6;
+    --accent-sage: #526B56;
+    --accent-sage-hover: #435947;
+    --accent-sage-subtle: #EBF0EC;
+    --accent-sage-text: #2F4432;
+  }
+
+  .dark {
+    --bg-app: #121311;
+    --bg-surface: #1B1D19;
+    --bg-muted: #171815;
+    --text-main: #F4F2ED;
+    --text-muted: #A6A99F;
+    --text-subtle: #8C8F87;
+    --border-color: #2D3028;
+    --border-subtle: #23251F;
+    --accent-sage: #6B8F72;
+    --accent-sage-hover: #7FA386;
+    --accent-sage-subtle: #212923;
+    --accent-sage-text: #A1C4A8;
+  }
+
+  body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Bengali', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .font-editorial {
+    font-family: 'Cormorant Garamond', 'Noto Sans Bengali', 'Noto Sans Devanagari', Georgia, serif;
+  }
+
+  .font-mono-tabular {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Comprehensive dark mode theme overrides for existing custom hex utilities */
+.dark {
+  color-scheme: dark;
+}
+
+.dark .bg-\[\#FAF8F5\] {
+  background-color: #121311 !important;
+}
+
+.dark .bg-\[\#FAF8F5\]\/95 {
+  background-color: rgba(18, 19, 17, 0.95) !important;
+}
+
+.dark .bg-\[\#FAF8F5\]\/50 {
+  background-color: rgba(18, 19, 17, 0.5) !important;
+}
+
+.dark .bg-\[\#FAF8F5\]\/60 {
+  background-color: rgba(18, 19, 17, 0.6) !important;
+}
+
+.dark .bg-\[\#F2EFE9\] {
+  background-color: #171815 !important;
+}
+
+.dark .bg-\[\#EFECE6\] {
+  background-color: #1E201B !important;
+}
+
+.dark .bg-\[\#EBF0EC\] {
+  background-color: #212923 !important;
+}
+
+.dark .text-\[\#354938\],
+.dark .text-\[\#2F4432\],
+.dark .text-\[\#2D4030\] {
+  color: #A1C4A8 !important;
+}
+
+.dark .border-\[\#CBD8CD\] {
+  border-color: #2D3D30 !important;
+}
+
+.dark .bg-white {
+  background-color: #1B1D19 !important;
+}
+
+.dark .text-\[\#1C1D1A\] {
+  color: #F4F2ED !important;
+}
+
+.dark .text-\[\#5C5E58\] {
+  color: #A6A99F !important;
+}
+
+.dark .text-\[\#73766E\] {
+  color: #8C8F87 !important;
+}
+
+.dark .border-\[\#E5E0D8\],
+.dark .border-\[\#E5E0D8\]\/80,
+.dark .border-\[\#E5E0D8\]\/60 {
+  border-color: #2D3028 !important;
+}
+
+.dark .border-\[\#EFECE6\] {
+  border-color: #23251F !important;
+}
+
+.dark .border-\[\#D8D3C8\] {
+  border-color: #363930 !important;
+}
+
+.dark .hover\:bg-\[\#F2EFE9\]:hover {
+  background-color: #252822 !important;
+}
+
+.dark .hover\:bg-\[\#FAF8F5\]:hover {
+  background-color: #22241E !important;
+}
+
+.dark .hover\:text-\[\#1C1D1A\]:hover {
+  color: #F4F2ED !important;
+}
+
+/* Ensure inputs and selects have comfortable dark backgrounds */
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="password"],
+.dark input[type="email"],
+.dark select,
+.dark textarea {
+  background-color: #171815;
+  color: #F4F2ED;
+  border-color: #2D3028;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #73766E;
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Compass, Sparkles, X, Layers, Calendar, Shirt } from 'lucide-react';
 import { DEMO_USER_PROFILE } from '../../data/demoWardrobeData';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface DemoWelcomeModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
   onExploreOnOwn,
   onExitDemo,
 }) => {
+  const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
           type="button"
           onClick={onExploreOnOwn}
           className="absolute top-5 right-5 p-1.5 rounded-lg text-[#73766E] hover:text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
-          aria-label="Close and explore on my own"
+          aria-label={t('tour.exploreOnOwnBtn', 'Explore on My Own')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -66,9 +68,9 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-mono uppercase tracking-wider font-semibold bg-[#EBF0EC] text-[#354938] border border-[#CBD8CD]">
             <Sparkles className="w-3 h-3 text-[#526B56]" />
-            Live Demo Experience
+            {t('common.demoMode', 'Live Demo Experience')}
           </span>
-          <span className="text-xs text-[#73766E]">Interactive Preview</span>
+          <span className="text-xs text-[#73766E]">{t('common.readOnlyDemo', 'Interactive Preview')}</span>
         </div>
 
         {/* Welcome Headline */}
@@ -76,20 +78,20 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
           id="demo-welcome-title"
           className="font-editorial text-3xl sm:text-4xl font-medium tracking-tight text-[#1C1D1A]"
         >
-          Welcome to OutDrobe
+          {t('tour.welcomeTitle', 'Welcome to OutDrobe')}
         </h2>
 
         {/* Supporting Text */}
         <p className="mt-1 text-base font-medium text-[#526B56]">
-          Discover how your digital wardrobe works.
+          {t('tour.welcomeSubtitle', 'Discover how your digital wardrobe works.')}
         </p>
 
         {/* Short Description */}
         <p id="demo-welcome-desc" className="mt-3 text-sm text-[#5C5E58] leading-relaxed">
-          You are exploring a pre-populated, interactive product tour designed to show how a calm
-          capsule wardrobe comes together. Experience Claire Vance’s 9-piece studio collection,
-          assemble outfits with instant layer harmony, and preview scheduled looks on a visual
-          calendar.
+          {t(
+            'tour.welcomeDesc',
+            'You are exploring a pre-populated interactive demo wardrobe curated for Claire Vance. Follow the quick guided tour to see how garments, outfits, and calendar scheduling flow together seamlessly.'
+          )}
         </p>
 
         {/* Capsule Profile Preview Card */}
@@ -118,21 +120,21 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
             <div className="p-2 rounded bg-white border border-[#E5E0D8]/60">
               <div className="flex items-center justify-center gap-1 text-[#73766E] mb-0.5">
                 <Shirt className="w-3 h-3 text-[#526B56]" />
-                <span className="text-[10px] uppercase font-mono tracking-wider">Garments</span>
+                <span className="text-[10px] uppercase font-mono tracking-wider">{t('nav.wardrobe', 'Garments')}</span>
               </div>
               <p className="font-mono text-sm font-semibold text-[#1C1D1A]">9 Pieces</p>
             </div>
             <div className="p-2 rounded bg-white border border-[#E5E0D8]/60">
               <div className="flex items-center justify-center gap-1 text-[#73766E] mb-0.5">
                 <Layers className="w-3 h-3 text-[#526B56]" />
-                <span className="text-[10px] uppercase font-mono tracking-wider">Outfits</span>
+                <span className="text-[10px] uppercase font-mono tracking-wider">{t('nav.outfits', 'Outfits')}</span>
               </div>
               <p className="font-mono text-sm font-semibold text-[#1C1D1A]">4 Looks</p>
             </div>
             <div className="p-2 rounded bg-white border border-[#E5E0D8]/60">
               <div className="flex items-center justify-center gap-1 text-[#73766E] mb-0.5">
                 <Calendar className="w-3 h-3 text-[#526B56]" />
-                <span className="text-[10px] uppercase font-mono tracking-wider">Schedule</span>
+                <span className="text-[10px] uppercase font-mono tracking-wider">{t('nav.calendar', 'Schedule')}</span>
               </div>
               <p className="font-mono text-sm font-semibold text-[#1C1D1A]">5 Plans</p>
             </div>
@@ -146,7 +148,7 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
             onClick={onStartTour}
             className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors cursor-pointer shadow-xs"
           >
-            <span>Start Guided Tour</span>
+            <span>{t('tour.startTourBtn', 'Start Guided Tour')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
@@ -156,19 +158,19 @@ export const DemoWelcomeModal: React.FC<DemoWelcomeModalProps> = ({
             className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium bg-white border border-[#D8D3C8] text-[#1C1D1A] hover:bg-[#F2EFE9] transition-colors cursor-pointer"
           >
             <Compass className="w-4 h-4 text-[#73766E]" />
-            <span>Explore on My Own</span>
+            <span>{t('tour.exploreOnOwnBtn', 'Explore on My Own')}</span>
           </button>
         </div>
 
         {/* Clear Exit Demo Action */}
         <div className="mt-4 pt-4 border-t border-[#E5E0D8] flex items-center justify-between text-xs text-[#73766E]">
-          <span>Read-only preview · Zero login required</span>
+          <span>{t('common.readOnlyDemo', 'Read-only preview · Zero login required')}</span>
           <button
             type="button"
             onClick={onExitDemo}
             className="font-medium text-[#73766E] hover:text-[#1C1D1A] underline underline-offset-2 transition-colors cursor-pointer"
           >
-            Exit Demo & Return to Home
+            {t('demo.exitPrompt', 'Exit Demo & Return to Home')}
           </button>
         </div>
       </div>

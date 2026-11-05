@@ -7,6 +7,7 @@ import type {
   WearLogEntry,
 } from '../../types/outdrobe';
 import { GarmentImage } from '../common/GarmentImage';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface WearHistoryViewProps {
   wearLogs: WearLogEntry[];
@@ -36,6 +37,7 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
   wardrobe,
   onLogWear,
 }) => {
+  const { t } = useLanguage();
   const safeWearLogs = Array.isArray(wearLogs) ? wearLogs : [];
   const safeOutfits = Array.isArray(outfits) ? outfits : [];
   const safeWardrobe = Array.isArray(wardrobe) ? wardrobe : [];
@@ -78,16 +80,33 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
     }
   };
 
+  const getOccasionLabel = (occ: OccasionTag): string => {
+    const keyMap: Record<OccasionTag, string> = {
+      'Daily Studio': 'occasions.dailyStudio',
+      Professional: 'occasions.professional',
+      Campus: 'occasions.campus',
+      Evening: 'occasions.evening',
+      Weekend: 'occasions.weekend',
+      Travel: 'occasions.travel',
+    };
+    return t(keyMap[occ] || occ, occ);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div>
-          <p className="text-xs font-medium text-[#526B56] mb-1">Chronological Closet Diary</p>
+          <p className="text-xs font-medium text-[#526B56] mb-1">
+            {t('history.diaryEyebrow', 'Chronological Closet Diary')}
+          </p>
           <h1 className="font-editorial text-3xl sm:text-4xl font-medium text-[#1C1D1A]">
-            Wear History
+            {t('history.historyTitle', 'Wear History')}
           </h1>
           <p className="mt-1 text-sm text-[#5C5E58]">
-            Every logged entry automatically updates garment wear counts and cost-per-wear metrics.
+            {t(
+              'history.historySubtitle',
+              'Every logged entry automatically updates garment wear counts and cost-per-wear metrics.'
+            )}
           </p>
         </div>
 
@@ -95,10 +114,10 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            Log Outfit Worn
+            {t('history.logOutfitWorn', 'Log Outfit Worn')}
           </button>
         )}
       </div>
@@ -109,11 +128,11 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#E5E0D8] bg-[#FAF8F5] text-xs font-medium text-[#73766E]">
-                  <th className="py-3.5 px-5">Date Worn</th>
-                  <th className="py-3.5 px-5">Outfit & Garments</th>
-                  <th className="py-3.5 px-5">Context</th>
-                  <th className="py-3.5 px-5">Notes</th>
-                  <th className="py-3.5 px-5 text-right">Pieces</th>
+                  <th className="py-3.5 px-5">{t('history.tableDate', 'Date Worn')}</th>
+                  <th className="py-3.5 px-5">{t('history.tableOutfit', 'Outfit & Garments')}</th>
+                  <th className="py-3.5 px-5">{t('history.tableContext', 'Context')}</th>
+                  <th className="py-3.5 px-5">{t('history.tableNotes', 'Notes')}</th>
+                  <th className="py-3.5 px-5 text-right">{t('history.tablePieces', 'Pieces')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EFECE6] text-sm">
@@ -168,10 +187,13 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
       ) : (
         <div className="bg-white border border-[#E5E0D8] rounded-xl py-16 px-6 text-center">
           <h2 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-            No wear history entries yet
+            {t('history.emptyTitle', 'No wear history entries yet')}
           </h2>
           <p className="mt-1.5 text-sm text-[#5C5E58] max-w-md mx-auto">
-            Log outfits as you wear them to uncover your most reliable wardrobe staples.
+            {t(
+              'history.emptySubtitle',
+              'Log outfits as you wear them to uncover your most reliable wardrobe staples.'
+            )}
           </p>
         </div>
       )}
@@ -186,21 +208,25 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              aria-label="Close wear log modal"
-              className="absolute top-4 right-4 w-9 h-9 rounded-lg flex items-center justify-center text-[#5C5E58] hover:bg-[#F2EFE9]"
+              aria-label={t('history.closeModal', 'Close wear log modal')}
+              className="absolute top-4 right-4 w-9 h-9 rounded-lg flex items-center justify-center text-[#5C5E58] hover:bg-[#F2EFE9] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <p className="text-xs font-medium text-[#526B56] mb-1">Atomic Counter Update</p>
+            <p className="text-xs font-medium text-[#526B56] mb-1">
+              {t('history.atomicUpdate', 'Atomic Counter Update')}
+            </p>
             <h3 className="font-editorial text-2xl font-medium text-[#1C1D1A]">
-              Log Outfit Worn
+              {t('history.logOutfitWorn', 'Log Outfit Worn')}
             </h3>
 
             <form onSubmit={handleCreateEntry} className="mt-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Date</label>
+                  <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                    {t('history.date', 'Date')}
+                  </label>
                   <input
                     type="date"
                     required
@@ -210,15 +236,17 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Occasion</label>
+                  <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                    {t('history.occasion', 'Occasion')}
+                  </label>
                   <select
                     value={occasion}
                     onChange={(e) => setOccasion(e.target.value as OccasionTag)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-[#D8D3C8] rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-white border border-[#D8D3C8] rounded-lg cursor-pointer"
                   >
                     {OCCASIONS.map((o) => (
                       <option key={o} value={o}>
-                        {o}
+                        {getOccasionLabel(o)}
                       </option>
                     ))}
                   </select>
@@ -226,15 +254,17 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">Outfit</label>
+                <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
+                  {t('history.outfit', 'Outfit')}
+                </label>
                 <select
                   value={outfitId || outfits[0]?.id}
                   onChange={(e) => setOutfitId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
+                  className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg cursor-pointer"
                 >
                   {outfits.map((o) => (
                     <option key={o.id} value={o.id}>
-                      {o.name} ({o.itemIds.length} pieces)
+                      {o.name} ({o.itemIds.length} {t('outfitCard.pieces', 'pieces')})
                     </option>
                   ))}
                 </select>
@@ -242,26 +272,29 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                  Weather Context
+                  {t('history.weatherContext', 'Weather Context')}
                 </label>
                 <input
                   type="text"
                   value={weatherNote}
                   onChange={(e) => setWeatherNote(e.target.value)}
-                  placeholder="16°C · Light Breeze"
+                  placeholder={t('history.weatherPlaceholder', '16°C · Light Breeze')}
                   className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-[#1C1D1A] mb-1">
-                  Comfort or Fit Note
+                  {t('history.comfortNote', 'Comfort or Fit Note')}
                 </label>
                 <input
                   type="text"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Great layering weight for indoor studio..."
+                  placeholder={t(
+                    'history.comfortPlaceholder',
+                    'Great layering weight for indoor studio...'
+                  )}
                   className="w-full px-3 py-2 text-sm bg-white border border-[#D8D3C8] rounded-lg"
                 />
               </div>
@@ -270,16 +303,18 @@ export const WearHistoryView: React.FC<WearHistoryViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A]"
+                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#F2EFE9] text-[#1C1D1A] cursor-pointer"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947]"
+                  className="px-4 py-2 rounded-lg text-xs font-medium bg-[#526B56] text-white hover:bg-[#435947] cursor-pointer"
                 >
-                  {saving ? 'Logging...' : 'Save Wear Entry'}
+                  {saving
+                    ? t('history.logging', 'Logging...')
+                    : t('history.saveWearEntry', 'Save Wear Entry')}
                 </button>
               </div>
             </form>
